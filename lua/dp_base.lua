@@ -45,4 +45,23 @@ function M.system_run(way, str_format, ...)
   M.histadd_cmd_en = nil
 end
 
+function M.lazy_map(tbls)
+  for _, tbl in ipairs(tbls) do
+    local opt = {}
+    for k, v in pairs(tbl) do
+      if type(k) == 'string' and k ~= 'mode' then
+        opt[k] = v
+      end
+    end
+    local lhs = tbl[1]
+    if type(lhs) == 'table' then
+      for _, l in ipairs(lhs) do
+        vim.keymap.set(tbl['mode'], l, tbl[2], opt)
+      end
+    else
+      vim.keymap.set(tbl['mode'], lhs, tbl[2], opt)
+    end
+  end
+end
+
 return M
