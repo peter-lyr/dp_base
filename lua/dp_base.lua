@@ -67,11 +67,11 @@ end
 function M.cmd(str_format, ...)
   local cmd = string.format(str_format, ...)
   vim.cmd(cmd)
+  return cmd
 end
 
 function M.cmd_histadd(str_format, ...)
-  M.cmd(str_format, ...)
-  vim.fn.histadd(':', cmd)
+  vim.fn.histadd(':', M.cmd(str_format, ...))
 end
 
 function M.aucmd(event, desc, opts)
