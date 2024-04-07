@@ -64,6 +64,16 @@ function M.lazy_map(tbls)
   end
 end
 
+function M.cmd(str_format, ...)
+  local cmd = string.format(str_format, ...)
+  vim.cmd(cmd)
+end
+
+function M.cmd_histadd(str_format, ...)
+  M.cmd(str_format, ...)
+  vim.fn.histadd(':', cmd)
+end
+
 function M.aucmd(event, desc, opts)
   opts = vim.tbl_deep_extend(
     'force',
@@ -73,6 +83,38 @@ function M.aucmd(event, desc, opts)
       desc = desc,
     })
   return vim.api.nvim_create_autocmd(event, opts)
+end
+
+function M.new_file(file)
+  return require 'plenary.path':new(file)
+end
+
+function M.file_exists(file)
+  file = vim.fn.trim(file)
+  if #file == 0 then
+    return nil
+  end
+  local fpath = M.new_file(file)
+  if fpath:exists() then
+    return fpath
+  end
+  return nil
+end
+
+function M.is_file(file)
+  local fpath = M.file_exists(file)
+  if fpath and fpath:is_file() then
+    return 1
+  end
+  return nil
+end
+
+function M.is_dir(file)
+  local fpath = M.file_exists(file)
+  if fpath and fpath:is_dir() then
+    return 1
+  end
+  return nil
 end
 
 return M
