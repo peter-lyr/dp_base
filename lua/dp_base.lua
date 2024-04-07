@@ -64,4 +64,15 @@ function M.lazy_map(tbls)
   end
 end
 
+function M.aucmd(event, desc, opts)
+  opts = vim.tbl_deep_extend(
+    'force',
+    opts,
+    {
+      group = vim.api.nvim_create_augroup(desc, {}),
+      desc = desc,
+    })
+  return vim.api.nvim_create_autocmd(event, opts)
+end
+
 return M
