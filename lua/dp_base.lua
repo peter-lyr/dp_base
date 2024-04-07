@@ -149,4 +149,16 @@ function M.rep(content)
   return vim.fn.tolower(content)
 end
 
+function M.check_plugins(plugins)
+  local fails = {}
+  local temp = require 'lazy.core.config'.plugins
+  for _, plugin in ipairs(plugins) do
+    local name = plugin:match(".*/(.*)")
+    if not temp[name] then
+      fails[#fails + 1] = name
+    end
+  end
+  return fails
+end
+
 return M
