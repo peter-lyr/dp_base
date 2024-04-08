@@ -1,6 +1,8 @@
 -- Copyright (c) 2024 liudepei. All Rights Reserved.
 -- create at 2024/04/08 09:54:46 Monday
 
+-- [ ] TODO: declare the function automatically
+
 local M = {}
 
 local system_cmd = require 'dp_base.system_cmd'
