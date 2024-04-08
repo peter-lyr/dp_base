@@ -27,7 +27,6 @@ end
 
 M.check_plugins {
   'git@github.com:peter-lyr/dp_asyncrun',
-  'skywind3000/asyncrun.vim ',
   'dbakker/vim-projectroot',
 }
 
