@@ -1,22 +1,27 @@
 -- Copyright (c) 2024 liudepei. All Rights Reserved.
 -- create at 2024/04/08 09:54:46 Monday
 
--- [ ] TODO: declare the function automatically
+-- [x] TODODONE: declare the function automatically
 
 local M = {}
+
+function M.merge_other_functions(luas)
+  for _, lua in ipairs(luas) do
+    for func, callback in pairs(lua) do
+      if type(callback) == 'function' then
+        M[func] = callback
+      end
+    end
+  end
+end
 
 local system_cmd = require 'dp_base.system_cmd'
 local plenary_path = require 'dp_base.plenary_path'
 
-M.system_run = system_cmd.system_run
-M.system_run_histadd = system_cmd.system_run_histadd
-M.cmd = system_cmd.cmd
-M.cmd_histadd = system_cmd.cmd_histadd
-
-M.new_file = plenary_path.new_file
-M.file_exists = plenary_path.file_exists
-M.is_file = plenary_path.is_file
-M.is_dir = plenary_path.is_dir
+M.merge_other_functions {
+  system_cmd,
+  plenary_path,
+}
 
 function M.lazy_map(tbls)
   for _, tbl in ipairs(tbls) do
@@ -84,7 +89,7 @@ function M.check_plugins(plugins)
   local fails = {}
   local temp = require 'lazy.core.config'.plugins
   for _, plugin in ipairs(plugins) do
-    local name = plugin:match(".*/(.*)")
+    local name = plugin:match '.*/(.*)'
     if not temp[name] then
       fails[#fails + 1] = name
     end
