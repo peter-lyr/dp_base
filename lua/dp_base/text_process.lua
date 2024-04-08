@@ -81,6 +81,21 @@ function M.notify_info(message)
   })
 end
 
+function M.notify_info_append(message)
+  local messages = type(message) == 'table' and message or { message, }
+  local title = ''
+  if #messages > 1 then
+    title = table.remove(messages, 1)
+  end
+  message = vim.fn.join(messages, '\n')
+  vim.notify(message, 'info', {
+    title = title,
+    animate = false,
+    on_open = M.set_win_md_ft,
+    timeout = 1000 * 8,
+  })
+end
+
 function M.notify_error(message)
   local messages = type(message) == 'table' and message or { message, }
   local title = ''
@@ -88,6 +103,21 @@ function M.notify_error(message)
     title = table.remove(messages, 1)
   end
   require 'notify'.dismiss()
+  message = vim.fn.join(messages, '\n')
+  vim.notify(message, 'error', {
+    title = title,
+    animate = false,
+    on_open = M.set_win_md_ft,
+    timeout = 1000 * 8,
+  })
+end
+
+function M.notify_error_append(message)
+  local messages = type(message) == 'table' and message or { message, }
+  local title = ''
+  if #messages > 1 then
+    title = table.remove(messages, 1)
+  end
   message = vim.fn.join(messages, '\n')
   vim.notify(message, 'error', {
     title = title,
