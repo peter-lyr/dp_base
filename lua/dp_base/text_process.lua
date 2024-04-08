@@ -210,4 +210,24 @@ function M.stack_item_uniq(tbl, item)
   end
 end
 
+function M.merge_tables(...)
+  local result = {}
+  for _, t in ipairs { ..., } do
+    for _, v in ipairs(t) do
+      result[#result + 1] = v
+    end
+  end
+  return result
+end
+
+function M.merge_dict(...)
+  local result = {}
+  for _, d in ipairs { ..., } do
+    for k, v in pairs(d) do
+      result[k] = v
+    end
+  end
+  return result
+end
+
 return M
