@@ -5,11 +5,11 @@
 
 local M = {}
 
-function M.merge_other_functions(luas)
+function M.merge_other_functions(m, luas)
   for _, lua in ipairs(luas) do
     for func, callback in pairs(lua) do
       if type(callback) == 'function' then
-        M[func] = callback
+        m[func] = callback
       end
     end
   end
@@ -20,12 +20,12 @@ local plenary_path = require 'dp_base.plenary_path'
 local text_process = require 'dp_base.text_process'
 local nvim_api = require 'dp_base.nvim_api'
 
-M.merge_other_functions {
+M.merge_other_functions(M, {
   system_cmd,
   plenary_path,
   text_process,
   nvim_api,
-}
+})
 
 function M.check_plugins(plugins)
   local fails = {}
@@ -36,7 +36,15 @@ function M.check_plugins(plugins)
       fails[#fails + 1] = name
     end
   end
-  return fails
+  if #fails > 0 then
+    print 'Below is required:'
+    for _, fail in ipairs(fails) do
+      print(' ', fail)
+    end
+    return fails
+  else
+    return nil
+  end
 end
 
 return M
