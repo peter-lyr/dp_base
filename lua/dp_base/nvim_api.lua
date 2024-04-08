@@ -33,4 +33,11 @@ function M.aucmd(event, desc, opts)
   return vim.api.nvim_create_autocmd(event, opts)
 end
 
+function M.buf_get_name(bufnr)
+  if bufnr then
+    return vim.api.nvim_buf_get_name(bufnr)
+  end
+  return vim.api.nvim_buf_get_name(0)
+end
+
 return M

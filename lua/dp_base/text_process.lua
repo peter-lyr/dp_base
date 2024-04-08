@@ -34,13 +34,13 @@ function M.getlua(luafile)
   return loaded
 end
 
-function M.getsource(luafile)
-  return M.rep(vim.fn.trim(luafile, '@'))
-end
-
 function M.rep(content)
   content = string.gsub(content, '/', '\\')
   return vim.fn.tolower(content)
+end
+
+function M.getsource(luafile)
+  return M.rep(vim.fn.trim(luafile, '@'))
 end
 
 function M.is(val)
@@ -136,6 +136,13 @@ end
 
 function M.is_in_tbl(item, tbl)
   return M.is(vim.tbl_contains(tbl, item))
+end
+
+function M.get_proj_root(file)
+  if file then
+    return M.rep(vim.fn['ProjectRootGet'](file))
+  end
+  return M.rep(vim.fn['ProjectRootGet']())
 end
 
 return M

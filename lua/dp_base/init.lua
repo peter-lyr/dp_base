@@ -5,28 +5,6 @@
 
 local M = {}
 
-function M.merge_other_functions(m, luas)
-  for _, lua in ipairs(luas) do
-    for func, callback in pairs(lua) do
-      if type(callback) == 'function' then
-        m[func] = callback
-      end
-    end
-  end
-end
-
-local system_cmd = require 'dp_base.system_cmd'
-local plenary_path = require 'dp_base.plenary_path'
-local text_process = require 'dp_base.text_process'
-local nvim_api = require 'dp_base.nvim_api'
-
-M.merge_other_functions(M, {
-  system_cmd,
-  plenary_path,
-  text_process,
-  nvim_api,
-})
-
 function M.check_plugins(plugins)
   local fails = {}
   local temp = require 'lazy.core.config'.plugins
@@ -46,5 +24,35 @@ function M.check_plugins(plugins)
     return nil
   end
 end
+
+M.check_plugins {
+  'git@github.com:peter-lyr/dp_asyncrun',
+  'skywind3000/asyncrun.vim ',
+}
+
+function M.merge_other_functions(m, luas)
+  if not luas then
+    return
+  end
+  for _, lua in ipairs(luas) do
+    for func, callback in pairs(lua) do
+      if type(callback) == 'function' then
+        m[func] = callback
+      end
+    end
+  end
+end
+
+local _, system_cmd = pcall(require, 'dp_base.system_cmd')
+local _, plenary_path = pcall(require, 'dp_base.plenary_path')
+local _, text_process = pcall(require, 'dp_base.text_process')
+local _, nvim_api = pcall(require, 'dp_base.nvim_api')
+
+M.merge_other_functions(M, {
+  system_cmd,
+  plenary_path,
+  text_process,
+  nvim_api,
+})
 
 return M
