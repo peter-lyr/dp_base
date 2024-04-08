@@ -49,4 +49,20 @@ function M.ui_sel(items, opts, callback)
   end
 end
 
+function M.set_timeout(timeout, callback)
+  return vim.fn.timer_start(timeout, function()
+    callback()
+  end, { ['repeat'] = 1, })
+end
+
+function M.set_interval(interval, callback)
+  return vim.fn.timer_start(interval, function()
+    callback()
+  end, { ['repeat'] = -1, })
+end
+
+function M.clear_interval(timer)
+  pcall(vim.fn.timer_stop, timer)
+end
+
 return M
