@@ -2,10 +2,6 @@ local M = {}
 
 local dp_asyncrun = require 'dp_asyncrun'
 
-function M.histadd_cmd_later()
-  M.histadd_cmd_en = 1
-end
-
 function M.system_run(way, str_format, ...)
   if type(str_format) == 'table' then
     str_format = vim.fn.join(str_format, ' && ')
@@ -36,13 +32,13 @@ function M.system_run(way, str_format, ...)
     cmd = string.format('wincmd s|term %s', cmd)
     vim.cmd(cmd)
   else
-    M.histadd_cmd_en = nil
     return
   end
-  if M.histadd_cmd_en then
-    vim.fn.histadd(':', cmd)
-  end
-  M.histadd_cmd_en = nil
+end
+
+function M.system_run_histadd(way, str_format, ...)
+  M.system_run(way, str_format, ...)
+  vim.fn.histadd(':', cmd)
 end
 
 function M.lazy_map(tbls)
