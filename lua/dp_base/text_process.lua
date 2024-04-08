@@ -184,6 +184,10 @@ function M.is_in_tbl(item, tbl)
   return M.is(vim.tbl_contains(tbl, item))
 end
 
+function M.is_in_str(item, str)
+  return string.match(str, item)
+end
+
 function M.get_proj_root(file)
   if file then
     return M.rep(vim.fn['ProjectRootGet'](file))
