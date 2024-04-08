@@ -55,7 +55,7 @@ function M.getcreate_dirpath(dirs)
   dirs = M.totable(dirs)
   local dir1 = table.remove(dirs, 1)
   dir1 = M.rep(dir1)
-  local dir_path = require 'plenary.path':new(dir1)
+  local dir_path = M.new_file(dir1)
   if not dir_path:exists() then
     vim.fn.mkdir(dir_path.filename)
   end
@@ -75,6 +75,27 @@ end
 
 function M.get_file(dirs, file)
   return M.get_filepath(dirs, file).filename
+end
+
+function M.get_file_dirs(file)
+  if not file then
+    file = vim.api.nvim_buf_get_name(0)
+  end
+  file = M.rep(file)
+  local file_path = M.new_file(file)
+  local dirs = {}
+  if not file_path:is_file() then
+    table.insert(dirs, 1, M.rep(file_path.filename))
+  end
+  for _ = 1, 24 do
+    file_path = file_path:parent()
+    local name = M.rep(file_path.filename)
+    dirs[#dirs + 1] = name
+    if not string.match(name, '/') then
+      break
+    end
+  end
+  return dirs
 end
 
 return M
