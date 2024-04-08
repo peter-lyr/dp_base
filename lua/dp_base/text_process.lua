@@ -145,4 +145,23 @@ function M.get_proj_root(file)
   return M.rep(vim.fn['ProjectRootGet']())
 end
 
+function M.index_of(array, value)
+  for i, v in ipairs(array) do
+    if v == value then
+      return i
+    end
+  end
+  return -1
+end
+
+function M.stack_item_uniq(tbl, item)
+  if M.is(tbl) then
+    local index = M.index_of(tbl, item)
+    if index ~= -1 then
+      table.remove(tbl, index)
+    end
+    tbl[#tbl + 1] = item
+  end
+end
+
 return M

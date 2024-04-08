@@ -40,4 +40,13 @@ function M.buf_get_name(bufnr)
   return vim.api.nvim_buf_get_name(0)
 end
 
+function M.ui_sel(items, opts, callback)
+  if type(opts) == 'string' then
+    opts = { prompt = opts, }
+  end
+  if items and #items > 0 then
+    vim.ui.select(items, opts, callback)
+  end
+end
+
 return M
