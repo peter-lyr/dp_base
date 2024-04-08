@@ -28,6 +28,7 @@ end
 M.check_plugins {
   'git@github.com:peter-lyr/dp_asyncrun',
   'skywind3000/asyncrun.vim ',
+  'dbakker/vim-projectroot',
 }
 
 function M.merge_other_functions(m, luas)
