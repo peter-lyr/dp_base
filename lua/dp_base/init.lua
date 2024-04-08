@@ -4,12 +4,17 @@
 local M = {}
 
 local system_cmd = require 'dp_base.system_cmd'
+local plenary_path = require 'dp_base.plenary_path'
 
 M.system_run = system_cmd.system_run
 M.system_run_histadd = system_cmd.system_run_histadd
-
 M.cmd = system_cmd.cmd
 M.cmd_histadd = system_cmd.cmd_histadd
+
+M.new_file = plenary_path.new_file
+M.file_exists = plenary_path.file_exists
+M.is_file = plenary_path.is_file
+M.is_dir = plenary_path.is_dir
 
 function M.lazy_map(tbls)
   for _, tbl in ipairs(tbls) do
@@ -39,38 +44,6 @@ function M.aucmd(event, desc, opts)
       desc = desc,
     })
   return vim.api.nvim_create_autocmd(event, opts)
-end
-
-function M.new_file(file)
-  return require 'plenary.path':new(file)
-end
-
-function M.file_exists(file)
-  file = vim.fn.trim(file)
-  if #file == 0 then
-    return nil
-  end
-  local fpath = M.new_file(file)
-  if fpath:exists() then
-    return fpath
-  end
-  return nil
-end
-
-function M.is_file(file)
-  local fpath = M.file_exists(file)
-  if fpath and fpath:is_file() then
-    return 1
-  end
-  return nil
-end
-
-function M.is_dir(file)
-  local fpath = M.file_exists(file)
-  if fpath and fpath:is_dir() then
-    return 1
-  end
-  return nil
 end
 
 function M.concant_info(prefix, info)
