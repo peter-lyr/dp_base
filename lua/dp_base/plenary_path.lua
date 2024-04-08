@@ -98,4 +98,19 @@ function M.get_file_dirs(file)
   return dirs
 end
 
+function M.get_relative_fname(fname, proj)
+  fname = vim.fn.fnamemodify(fname, ':p')
+  local temp_fname = M.rep(vim.deepcopy(fname))
+  local temp_proj = M.rep(vim.deepcopy(proj))
+  if #temp_proj > #temp_fname then
+    return fname
+  end
+  if string.sub(temp_fname, 1, #temp_proj) == temp_proj then
+    if string.sub(temp_fname, #temp_proj + 1, #temp_proj + 1) == '\\' then
+      return string.sub(fname, #temp_proj + 2, #fname)
+    end
+  end
+  return fname
+end
+
 return M
