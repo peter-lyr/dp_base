@@ -113,4 +113,26 @@ function M.get_relative_fname(fname, proj)
   return fname
 end
 
+function M.get_file_dirs_till_git(file)
+  if not file then
+    file = vim.api.nvim_buf_get_name(0)
+  end
+  file = M.rep(file)
+  local file_path = M.new_file(file)
+  if not file_path:is_file() then
+    print('not file: ' .. file)
+    return {}
+  end
+  local dirs = {}
+  for _ = 1, 24 do
+    file_path = file_path:parent()
+    local name = M.rep(file_path.filename)
+    table.insert(dirs, 1, name)
+    if M.file_exists(M.new_file(name):joinpath '.git'.filename) then
+      break
+    end
+  end
+  return dirs
+end
+
 return M

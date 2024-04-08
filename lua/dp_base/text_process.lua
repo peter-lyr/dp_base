@@ -247,4 +247,13 @@ function M.is_buf_fts(fts, buf)
   return nil
 end
 
+function M.get_source_dot_dir(source, ext)
+  local root = vim.fn.fnamemodify(source, ':p:h')
+  local tail = vim.fn.fnamemodify(source, ':p:t')
+  if string.sub(tail, 1, 1) ~= '.' then
+    tail = '.' .. tail
+  end
+  return string.format('%s\\%s.%s', root, tail, ext)
+end
+
 return M
