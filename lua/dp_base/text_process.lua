@@ -230,4 +230,17 @@ function M.merge_dict(...)
   return result
 end
 
+function M.is_buf_fts(fts, buf)
+  if not buf then
+    buf = vim.fn.bufnr()
+  end
+  if type(fts) == 'string' then
+    fts = { fts, }
+  end
+  if M.is(vim.tbl_contains(fts, vim.api.nvim_buf_get_option(buf, 'filetype'))) then
+    return 1
+  end
+  return nil
+end
+
 return M
