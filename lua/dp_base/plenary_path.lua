@@ -3,8 +3,13 @@
 
 local M = {}
 
+function M.rep(content)
+  content = string.gsub(content, '/', '\\')
+  return vim.fn.tolower(content)
+end
+
 function M.new_file(file)
-  return require 'plenary.path':new(file)
+  return require 'plenary.path':new(M.rep(file))
 end
 
 function M.file_exists(file)
@@ -33,6 +38,10 @@ function M.is_dir(file)
     return 1
   end
   return nil
+end
+
+function M.file_parent(file)
+  return M.new_file(file):parent().filename
 end
 
 return M
