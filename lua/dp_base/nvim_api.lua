@@ -3,6 +3,12 @@
 
 local M = {}
 
+local common = require 'dp_base.common'
+
+common.merge_other_functions(M, {
+  common,
+})
+
 function M.lazy_map(tbls)
   for _, tbl in ipairs(tbls) do
     local opt = {}
@@ -31,13 +37,6 @@ function M.aucmd(event, desc, opts)
       desc = desc,
     })
   return vim.api.nvim_create_autocmd(event, opts)
-end
-
-function M.buf_get_name(bufnr)
-  if bufnr then
-    return vim.api.nvim_buf_get_name(bufnr)
-  end
-  return vim.api.nvim_buf_get_name(0)
 end
 
 function M.ui_sel(items, opts, callback)

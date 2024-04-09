@@ -3,6 +3,12 @@
 
 local M = {}
 
+local common = require 'dp_base.common'
+
+common.merge_other_functions(M, {
+  common,
+})
+
 function M.rep(content)
   content = string.gsub(content, '/', '\\')
   return vim.fn.tolower(content)
@@ -42,13 +48,6 @@ end
 
 function M.file_parent(file)
   return M.new_file(file):parent().filename
-end
-
-function M.totable(var)
-  if type(var) ~= 'table' then
-    var = { var, }
-  end
-  return var
 end
 
 function M.getcreate_dirpath(dirs)
@@ -137,6 +136,55 @@ function M.get_file_dirs_till_git(file)
     end
   end
   return dirs
+end
+
+function M.is_file_in_filetypes(file, filetypes)
+  if not file then
+    file = M.buf_get_name()
+  end
+  filetypes = M.totable(filetypes)
+  local ext = string.match(file, '%.([^.]+)$')
+  if not filetypes or M.is(vim.tbl_contains(filetypes, ext)) then
+    return 1
+  end
+  return nil
+end
+
+function M.match_string_or(str, patterns)
+  patterns = M.totable(patterns)
+  for _, pattern in ipairs(patterns) do
+    if string.match(str, pattern) then
+      return 1
+    end
+  end
+  return nil
+end
+
+function M.scan_files_do(dir, opt, entries)
+  local files = {}
+  local patterns = nil
+  local filetypes = nil
+  if opt then
+    patterns = opt['patterns']
+    filetypes = opt['filetypes']
+  end
+  for _, entry in ipairs(entries) do
+    local file = M.rep_slash(entry)
+    local f = string.sub(file, #dir + 2, #file)
+    if (not M.is(patterns) or M.match_string_or(f, patterns)) and
+        (not M.is(filetypes) or M.is_file_in_filetypes(f, filetypes)) then
+      if not M.match_string_or(f, M.ignore_dirs) then
+        files[#files + 1] = file
+      end
+    end
+  end
+  return files
+end
+
+function M.scan_files_deep(dir, opt)
+  if not dir then dir = vim.loop.cwd() end
+  local entries = require 'plenary.scandir'.scan_dir(dir, { hidden = true, depth = 32, add_dirs = false, })
+  return M.scan_files_do(dir, opt, entries)
 end
 
 return M

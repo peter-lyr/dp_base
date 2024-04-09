@@ -3,6 +3,12 @@
 
 local M = {}
 
+local common = require 'dp_base.common'
+
+common.merge_other_functions(M, {
+  common,
+})
+
 M.NOT_BIN_EXTS = {
   'lua',
   'c', 'h',
@@ -34,20 +40,8 @@ function M.getlua(luafile)
   return loaded
 end
 
-function M.rep(content)
-  content = string.gsub(content, '/', '\\')
-  return vim.fn.tolower(content)
-end
-
 function M.getsource(luafile)
   return M.rep(vim.fn.trim(luafile, '@'))
-end
-
-function M.is(val)
-  if not val or val == 0 or val == '' or val == false or val == {} then
-    return nil
-  end
-  return 1
 end
 
 function M.format(str_format, ...)
@@ -149,13 +143,6 @@ function M.get_short(content, max)
     return s1 .. '…' .. s2
   end
   return content
-end
-
-function M.totable(var)
-  if type(var) ~= 'table' then
-    var = { var, }
-  end
-  return var
 end
 
 function M.is_file_in_extensions(file, extensions)

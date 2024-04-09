@@ -3,6 +3,12 @@
 
 local M = {}
 
+local common = require 'dp_base.common'
+
+common.merge_other_functions(M, {
+  common,
+})
+
 local dp_asyncrun = require 'dp_asyncrun'
 
 function M.system_run(way, str_format, ...)

@@ -5,6 +5,10 @@
 
 local M = {}
 
+local common = require 'dp_base.common'
+
+M.merge_other_functions = common.merge_other_functions
+
 function M.check_plugins(plugins)
   local fails = {}
   local temp = require 'lazy.core.config'.plugins
@@ -29,19 +33,6 @@ M.check_plugins {
   'git@github.com:peter-lyr/dp_asyncrun',
   'dbakker/vim-projectroot',
 }
-
-function M.merge_other_functions(m, luas)
-  if not luas then
-    return
-  end
-  for _, lua in ipairs(luas) do
-    for func, callback in pairs(lua) do
-      if type(callback) == 'function' then
-        m[func] = callback
-      end
-    end
-  end
-end
 
 local _, system_cmd = pcall(require, 'dp_base.system_cmd')
 local _, plenary_path = pcall(require, 'dp_base.plenary_path')
