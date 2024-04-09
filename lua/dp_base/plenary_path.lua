@@ -9,11 +9,6 @@ common.merge_other_functions(M, {
   common,
 })
 
-function M.rep(content)
-  content = string.gsub(content, '/', '\\')
-  return vim.fn.tolower(content)
-end
-
 function M.new_file(file)
   return require 'plenary.path':new(M.rep(file))
 end
