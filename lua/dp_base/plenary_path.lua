@@ -68,6 +68,10 @@ function M.getcreate_dirpath(dirs)
   return dir_path
 end
 
+function M.getcreate_dir(dirs)
+  return M.getcreate_dirpath(dirs).filename
+end
+
 function M.get_filepath(dirs, file)
   local dirpath = M.getcreate_dirpath(dirs)
   return dirpath:joinpath(file)
