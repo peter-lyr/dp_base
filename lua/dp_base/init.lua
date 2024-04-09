@@ -5,9 +5,7 @@
 
 local M = {}
 
-local common = require 'dp_base.common'
-
-M.merge_other_functions = common.merge_other_functions
+M.merge_other_functions = require 'dp_base.common'.merge_other_functions
 
 function M.check_plugins(plugins)
   local fails = {}
