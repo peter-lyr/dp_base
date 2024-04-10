@@ -3,6 +3,10 @@
 
 local M = {}
 
+function M.new_file(file)
+  return require 'plenary.path':new(M.rep(file))
+end
+
 function M.merge_other_functions(m, luas)
   if not luas then
     return

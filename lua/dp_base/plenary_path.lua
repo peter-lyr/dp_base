@@ -9,10 +9,6 @@ common.merge_other_functions(M, {
   common,
 })
 
-function M.new_file(file)
-  return require 'plenary.path':new(M.rep(file))
-end
-
 function M.file_exists(file)
   file = vim.fn.trim(file)
   if #file == 0 then

@@ -11,6 +11,15 @@ common.merge_other_functions(M, {
 
 local dp_asyncrun = require 'dp_asyncrun'
 
+function M.system_cd(file)
+  local fpath = M.new_file(file)
+  if fpath:is_dir() then
+    return 'cd /d ' .. file
+  else
+    return 'cd /d ' .. fpath:parent().filename
+  end
+end
+
 function M.system_run(way, str_format, ...)
   if type(str_format) == 'table' then
     str_format = vim.fn.join(str_format, ' && ')
