@@ -28,6 +28,7 @@ function M.check_plugins(plugins)
 end
 
 M.check_plugins {
+  'git@github.com:peter-lyr/dp_init',
   'git@github.com:peter-lyr/dp_asyncrun',
   'dbakker/vim-projectroot',
 }

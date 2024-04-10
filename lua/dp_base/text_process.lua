@@ -286,6 +286,11 @@ function M.setreg()
   vim.fn.setreg('"', bak)
 end
 
+if not DataLazyPlugins then
+  DataLazyPlugins = vim.fn.stdpath 'data' .. '\\lazy\\plugins'
+  print('DataLazyPlugins not found, set it: ' .. DataLazyPlugins .. '(maybe wrong, please check)')
+end
+
 function M.get_dp_plugins()
   local dirs = {}
   for _, dir in ipairs(vim.fn.getcompletion('Lazy update dp_', 'cmdline')) do
