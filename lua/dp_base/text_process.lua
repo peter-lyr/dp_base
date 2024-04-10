@@ -286,4 +286,8 @@ function M.setreg()
   vim.fn.setreg('"', bak)
 end
 
+function M.get_dp_plugins()
+  return vim.fn.getcompletion('Lazy update dp_', 'cmdline')
+end
+
 return M
