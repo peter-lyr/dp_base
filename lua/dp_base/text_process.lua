@@ -254,32 +254,32 @@ function M.setreg()
     pcall(vim.fn.setpos, '.', save_cursor)
   end
   if string.match(line, [[%"]]) then
-    vim.cmd 'silent norm yi"'
+    vim.cmd 'keepjumps silent norm yi"'
     vim.g.double_quote = vim.fn.getreg '"' ~= bak and vim.fn.getreg '"' or ''
     pcall(vim.fn.setpos, '.', save_cursor)
   end
   if string.match(line, [[%`]]) then
-    vim.cmd 'silent norm yi`'
+    vim.cmd 'keepjumps silent norm yi`'
     vim.g.back_quote = vim.fn.getreg '"' ~= bak and vim.fn.getreg '"' or ''
     pcall(vim.fn.setpos, '.', save_cursor)
   end
   if string.match(line, [[%)]]) then
-    vim.cmd 'silent norm yi)'
+    vim.cmd 'keepjumps silent norm yi)'
     vim.g.parentheses = vim.fn.getreg '"' ~= bak and vim.fn.getreg '"' or ''
     pcall(vim.fn.setpos, '.', save_cursor)
   end
   if string.match(line, '%]') then
-    vim.cmd 'silent norm yi]'
+    vim.cmd 'keepjumps silent norm yi]'
     vim.g.bracket = vim.fn.getreg '"' ~= bak and vim.fn.getreg '"' or ''
     pcall(vim.fn.setpos, '.', save_cursor)
   end
   if string.match(line, [[%}]]) then
-    vim.cmd 'silent norm yi}'
+    vim.cmd 'keepjumps silent norm yi}'
     vim.g.brace = vim.fn.getreg '"' ~= bak and vim.fn.getreg '"' or ''
     pcall(vim.fn.setpos, '.', save_cursor)
   end
   if string.match(line, [[%>]]) then
-    vim.cmd 'silent norm yi>'
+    vim.cmd 'keepjumps silent norm yi>'
     vim.g.angle_bracket = vim.fn.getreg '"' ~= bak and vim.fn.getreg '"' or ''
     pcall(vim.fn.setpos, '.', save_cursor)
   end
