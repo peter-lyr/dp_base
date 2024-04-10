@@ -287,7 +287,11 @@ function M.setreg()
 end
 
 function M.get_dp_plugins()
-  return vim.fn.getcompletion('Lazy update dp_', 'cmdline')
+  local dirs = {}
+  for _, dir in ipairs(vim.fn.getcompletion('Lazy update dp_', 'cmdline')) do
+    dirs[#dirs + 1] = DataLazyPlugins .. '\\' .. dir
+  end
+  return dirs
 end
 
 return M
