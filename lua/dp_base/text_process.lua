@@ -304,4 +304,30 @@ function M.get_dp_plugins()
   return dirs
 end
 
+function M.findall(patt, str)
+  vim.g.patt = patt
+  vim.g.str = str
+  vim.g.res = {}
+  vim.cmd [[
+    python << EOF
+import re
+import vim
+try:
+  import luadata
+except:
+  import os
+  os.sytem('pip install -i https://pypi.tuna.tsinghua.edu.cn/simple --trusted-host mirrors.aliyun.com luadata')
+  import luadata
+patt = vim.eval('g:patt')
+string = vim.eval('g:str')
+res = re.findall(patt, string)
+if res:
+  new_res = eval(str(res).replace('(', '[').replace(')', ']'))
+  new_res = luadata.serialize(new_res, encoding='utf-8', indent=' ', indent_level=0)
+  vim.command(f"""lua vim.g.res = {new_res}""")
+EOF
+  ]]
+  return vim.g.res
+end
+
 return M
