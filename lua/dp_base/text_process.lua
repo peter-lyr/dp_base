@@ -52,6 +52,11 @@ function M.print(str_format, ...)
   print(M.format(str_format, ...))
 end
 
+function M.echo(str_format, ...)
+  str_format = string.gsub(str_format, "'", '"')
+  M.cmd(string.format("ec '" .. str_format .. "'", ...))
+end
+
 function M.set_win_md_ft(win)
   local buf = vim.api.nvim_win_get_buf(win)
   vim.api.nvim_buf_set_option(buf, 'filetype', 'markdown')

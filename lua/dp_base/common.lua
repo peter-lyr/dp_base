@@ -3,6 +3,12 @@
 
 local M = {}
 
+function M.cmd(str_format, ...)
+  local cmd = string.format(str_format, ...)
+  vim.cmd(cmd)
+  return cmd
+end
+
 function M.new_file(file)
   return require 'plenary.path':new(M.rep(file))
 end
