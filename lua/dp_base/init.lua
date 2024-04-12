@@ -37,12 +37,14 @@ local _, system_cmd = pcall(require, 'dp_base.system_cmd')
 local _, plenary_path = pcall(require, 'dp_base.plenary_path')
 local _, text_process = pcall(require, 'dp_base.text_process')
 local _, nvim_api = pcall(require, 'dp_base.nvim_api')
+local _, filetypes = pcall(require, 'dp_base.filetypes')
 
 M.merge_other_functions(M, {
   system_cmd,
   plenary_path,
   text_process,
   nvim_api,
+  filetypes,
 })
 
 return M

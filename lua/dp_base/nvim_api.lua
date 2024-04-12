@@ -28,17 +28,6 @@ function M.lazy_map(tbls)
   end
 end
 
-function M.aucmd(event, desc, opts)
-  opts = vim.tbl_deep_extend(
-    'force',
-    opts,
-    {
-      group = vim.api.nvim_create_augroup(desc, {}),
-      desc = desc,
-    })
-  return vim.api.nvim_create_autocmd(event, opts)
-end
-
 function M.ui_sel(items, opts, callback)
   if type(opts) == 'string' then
     opts = { prompt = opts, }
@@ -46,22 +35,6 @@ function M.ui_sel(items, opts, callback)
   if items and #items > 0 then
     vim.ui.select(items, opts, callback)
   end
-end
-
-function M.set_timeout(timeout, callback)
-  return vim.fn.timer_start(timeout, function()
-    callback()
-  end, { ['repeat'] = 1, })
-end
-
-function M.set_interval(interval, callback)
-  return vim.fn.timer_start(interval, function()
-    callback()
-  end, { ['repeat'] = -1, })
-end
-
-function M.clear_interval(timer)
-  pcall(vim.fn.timer_stop, timer)
 end
 
 return M
