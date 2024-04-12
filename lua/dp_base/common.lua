@@ -3,6 +3,17 @@
 
 local M = {}
 
+function M.format(str_format, ...)
+  return string.format(str_format, ...)
+end
+
+function M.get_proj_root(file)
+  if file then
+    return M.rep(vim.fn['ProjectRootGet'](file))
+  end
+  return M.rep(vim.fn['ProjectRootGet']())
+end
+
 function M.cmd(str_format, ...)
   local cmd = string.format(str_format, ...)
   vim.cmd(cmd)

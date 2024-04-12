@@ -206,4 +206,104 @@ function M.scan_files_deep(dir, opt)
   return M.scan_files_do(dir, opt, entries)
 end
 
+function M.normpath(file)
+  if not M.file_exists(file) then
+    return ''
+  end
+  vim.g.normpath = file
+  vim.cmd [[
+    python << EOF
+import os
+import vim
+normpath = os.path.normpath(vim.eval('g:normpath')).replace('\\', '/')
+vim.command(f'let g:normpath = "{normpath}"')
+EOF
+]]
+  return M.rep(vim.g.normpath)
+end
+
+function M.get_cfile(cfile)
+  if not cfile then
+    cfile = M.normpath(M.format('%s\\%s', vim.fn.expand '%:p:h', vim.fn.expand '<cfile>'))
+    if M.is(cfile) and M.is_file(cfile) then
+      return cfile
+    else
+      cfile = M.normpath(M.format('%s\\%s', vim.fn.expand '%:p:h', string.match(vim.fn.getline '.', '`([^`]+)`')))
+      if M.is(cfile) and M.is_file(cfile) then
+        return cfile
+      end
+    end
+    cfile = M.normpath(M.format('%s\\%s', vim.loop.cwd(), vim.fn.expand '<cfile>'))
+    if M.is(cfile) and M.is_file(cfile) then
+      return cfile
+    else
+      cfile = M.normpath(M.format('%s\\%s', vim.loop.cwd(), string.match(vim.fn.getline '.', '`([^`]+)`')))
+      if M.is(cfile) and M.is_file(cfile) then
+        return cfile
+      end
+    end
+    cfile = M.normpath(M.format('%s\\%s', vim.fn.expand '%:p:h', vim.fn.expand '<cfile>'))
+    if M.is(cfile) and M.is_dir(cfile) then
+      return cfile
+    else
+      cfile = M.normpath(M.format('%s\\%s', vim.fn.expand '%:p:h', string.match(vim.fn.getline '.', '`([^`]+)`')))
+      if M.is(cfile) and M.is_dir(cfile) then
+        return cfile
+      end
+    end
+    cfile = M.normpath(M.format('%s\\%s', vim.loop.cwd(), vim.fn.expand '<cfile>'))
+    if M.is(cfile) and M.is_dir(cfile) then
+      return cfile
+    else
+      cfile = M.normpath(M.format('%s\\%s', vim.loop.cwd(), string.match(vim.fn.getline '.', '`([^`]+)`')))
+      if M.is(cfile) and M.is_dir(cfile) then
+        return cfile
+      end
+    end
+  end
+  cfile = M.normpath(M.format('%s\\%s', vim.fn.expand '%:p:h', cfile))
+  if M.is(cfile) and M.is_dir(cfile) then
+    return cfile
+  end
+  return M.normpath(M.format('%s\\%s', vim.loop.cwd(), cfile))
+end
+
+function M.jump_or_split(file)
+  file = M.rep(file)
+  local file_proj = M.get_proj_root(file)
+  local jumped = nil
+  for winnr = 1, vim.fn.winnr '$' do
+    local bufnr = vim.fn.winbufnr(winnr)
+    local fname = M.rep(vim.api.nvim_buf_get_name(bufnr))
+    if M.file_exists(fname) then
+      local proj = M.get_proj_root(fname)
+      if M.is(proj) and file_proj == proj then
+        vim.fn.win_gotoid(vim.fn.win_getid(winnr))
+        jumped = 1
+        break
+      end
+    end
+  end
+  if not jumped then
+    vim.cmd 'wincmd s'
+  end
+  M.cmd('e %s', file)
+end
+
+function M.find_its_place_to_open(file)
+  file = M.rep(file)
+  local file_proj = M.get_proj_root(file)
+  for winnr = 1, vim.fn.winnr '$' do
+    local bufnr = vim.fn.winbufnr(winnr)
+    local fname = M.rep(vim.api.nvim_buf_get_name(bufnr))
+    if M.file_exists(fname) then
+      local proj = M.get_proj_root(fname)
+      if M.is(proj) and file_proj == proj then
+        return vim.fn.win_getid(winnr)
+      end
+    end
+  end
+  return nil
+end
+
 return M
