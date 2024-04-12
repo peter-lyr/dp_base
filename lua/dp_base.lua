@@ -715,7 +715,7 @@ function M.scan_files_do(dir, opt, entries)
     filetypes = opt['filetypes']
   end
   for _, entry in ipairs(entries) do
-    local file = M.rep_slash(entry)
+    local file = M.rep(entry)
     local f = string.sub(file, #dir + 2, #file)
     if (not M.is(patterns) or M.match_string_or(f, patterns)) and
         (not M.is(filetypes) or M.is_file_in_filetypes(f, filetypes)) then
@@ -831,6 +831,37 @@ function M.find_its_place_to_open(file)
     end
   end
   return nil
+end
+
+function M.get_fname_short(fname)
+  local temp__ = vim.fn.tolower(vim.fn.fnamemodify(fname, ':t'))
+  if #temp__ >= 17 then
+    local s1 = ''
+    local s2 = ''
+    for i = 17, 3, -1 do
+      s2 = string.sub(temp__, #temp__ - i, #temp__)
+      if vim.fn.strdisplaywidth(s2) <= 8 then
+        break
+      end
+    end
+    for i = 17, 3, -1 do
+      s1 = string.sub(temp__, 1, i)
+      if vim.fn.strdisplaywidth(s1) <= 8 then
+        break
+      end
+    end
+    return s1 .. '…' .. s2
+  end
+  return temp__
+end
+
+function M.get_only_name(file)
+  file = M.rep(file)
+  local only_name = vim.fn.trim(file, '\\')
+  if string.match(only_name, '\\') then
+    only_name = string.match(only_name, '.+%\\(.+)$')
+  end
+  return only_name
 end
 
 return M
