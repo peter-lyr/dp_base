@@ -864,4 +864,13 @@ function M.get_only_name(file)
   return only_name
 end
 
+function M.delete_file(file)
+  M.system_run('start silent', 'git rm "%s"', file)
+  M.system_run('start silent', 'del /f /q "%s"', file)
+end
+
+function M.delete_folder(folder)
+  M.system_run('start silent', 'rd /s /q "%s"', folder)
+end
+
 return M
