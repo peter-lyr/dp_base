@@ -5,20 +5,13 @@
 
 local M = {}
 
-local dp_asyncrun = require 'dp_asyncrun'
-
-function M.merge_other_functions(m, luas)
-  if not luas then
-    return
-  end
-  for _, lua in ipairs(luas) do
-    for func, callback in pairs(lua) do
-      if type(callback) == 'function' then
-        m[func] = callback
-      end
-    end
-  end
-end
+M.NOT_BIN_EXTS = {
+  'lua',
+  'c', 'h',
+  'txt',
+  'xm', 'lst',
+  'bat', 'cmd',
+}
 
 function M.check_plugins(plugins)
   local fails = {}
@@ -46,13 +39,20 @@ M.check_plugins {
   'dbakker/vim-projectroot',
 }
 
-M.NOT_BIN_EXTS = {
-  'lua',
-  'c', 'h',
-  'txt',
-  'xm', 'lst',
-  'bat', 'cmd',
-}
+local dp_asyncrun = require 'dp_asyncrun'
+
+function M.merge_other_functions(m, luas)
+  if not luas then
+    return
+  end
+  for _, lua in ipairs(luas) do
+    for func, callback in pairs(lua) do
+      if type(callback) == 'function' then
+        m[func] = callback
+      end
+    end
+  end
+end
 
 function M.concant_info(prefix, info)
   --[[ use like this:
