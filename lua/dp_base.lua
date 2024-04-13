@@ -918,4 +918,13 @@ M.source = M.getsource(debug.getinfo(1)['source'])
 M.lua = M.getlua(M.source)
 M.copy2clip_exe = M.get_filepath(M.get_source_dot_dir(M.source), 'copy2clip.exe').filename
 
+function M.is_sure(str_format, ...)
+  local prompt = string.format(str_format, ...)
+  local res = vim.fn.input(string.format('%s ? [Y/n]: ', prompt), 'y')
+  if vim.tbl_contains({ 'y', 'Y', 'yes', 'Yes', 'YES', }, res) == false then
+    return nil
+  end
+  return 1
+end
+
 return M
