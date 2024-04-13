@@ -893,4 +893,20 @@ function M.sel_run(m)
   end)
 end
 
+function M.system_open_file(str_format, ...)
+  M.system_run_histadd('start', str_format, ...)
+end
+
+function M.system_open_file_silent(str_format, ...)
+  M.system_run_histadd('start silent', str_format, ...)
+end
+
+function M.get_head_dir()
+  local fname = M.rep(M.buf_get_name())
+  if M.is(fname) and M.file_exists(fname) then
+    return M.file_parent(fname)
+  end
+  return vim.loop.cwd()
+end
+
 return M
