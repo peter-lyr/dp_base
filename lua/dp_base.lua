@@ -921,8 +921,9 @@ function M.get_head_dir()
 end
 
 M.source = M.getsource(debug.getinfo(1)['source'])
+M.dot_dir = M.get_source_dot_dir(M.source)
 M.lua = M.getlua(M.source)
-M.copy2clip_exe = M.get_filepath(M.get_source_dot_dir(M.source), 'copy2clip.exe').filename
+M.copy2clip_exe = M.get_file(M.dot_dir, 'copy2clip.exe')
 
 function M.is_sure(str_format, ...)
   local prompt = string.format(str_format, ...)
@@ -980,6 +981,32 @@ function M.get_my_dirs()
     M.rep(vim.fn.stdpath 'data'),
     M.rep(vim.fn.expand [[$VIMRUNTIME]]),
   }
+end
+
+function M.get_SHGetFolderPath(name)
+  local exe_name = 'SHGetFolderPath'
+  M.get_source_dot_dir(M.source)
+  local SHGetFolderPath_without_ext = M.get_file(M.dot_dir, exe_name)
+  local SHGetFolderPath_exe = SHGetFolderPath_without_ext .. '.exe'
+  if not M.is(vim.fn.filereadable(SHGetFolderPath_exe)) then
+    M.system_run('start silent', '%s && gcc %s.c -Wall -s -ffunction-sections -fdata-sections -Wl,--gc-sections -O2 -o %s.exe', M.system_cd(SHGetFolderPath_without_ext), exe_name, exe_name)
+    M.notify_info 'exe creating, try again later...'
+    return {}
+  end
+  local f = io.popen(SHGetFolderPath_exe .. ' ' .. (name and name or ''))
+  if f then
+    local dirs = {}
+    for dir in string.gmatch(f:read '*a', '([%S ]+)') do
+      dir = M.rep(dir)
+      if not M.is_in_tbl(dir, dirs) then
+        dirs[#dirs + 1] = dir
+      end
+    end
+    f:close()
+    table.sort(dirs)
+    return dirs
+  end
+  return {}
 end
 
 return M
