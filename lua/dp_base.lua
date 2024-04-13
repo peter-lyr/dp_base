@@ -738,6 +738,12 @@ function M.scan_files_deep(dir, opt)
   return M.scan_files_do(dir, opt, entries)
 end
 
+function M.scan_files(dir, opt)
+  if not dir then dir = vim.loop.cwd() end
+  local entries = require 'plenary.scandir'.scan_dir(dir, { hidden = true, depth = 1, add_dirs = false, })
+  return M.scan_files_do(dir, opt, entries)
+end
+
 function M.normpath(file)
   if not M.file_exists(file) then
     return ''
@@ -880,7 +886,7 @@ end
 
 function M.sel_run(m)
   if not m.lua then
-    print('no M.lua, please check!')
+    print 'no M.lua, please check!'
     return
   end
   local functions = {}
@@ -925,6 +931,55 @@ function M.is_sure(str_format, ...)
     return nil
   end
   return 1
+end
+
+function M.get_fname_tail(file)
+  file = M.rep(file)
+  local fpath = M.new_file(file)
+  if fpath:is_file() then
+    file = fpath:_split()
+    return file[#file]
+  elseif fpath:is_dir() then
+    file = fpath:_split()
+    if #file[#file] > 0 then
+      return file[#file]
+    else
+      return file[#file - 1]
+    end
+  end
+  return ''
+end
+
+function M.get_dirpath(dirs)
+  dirs = M.totable(dirs)
+  local dir1 = table.remove(dirs, 1)
+  dir1 = M.rep(dir1)
+  local dir_path = M.new_file(dir1)
+  for _, dir in ipairs(dirs) do
+    if not dir_path:exists() then
+      vim.fn.mkdir(dir_path.filename)
+    end
+    dir_path = dir_path:joinpath(dir)
+  end
+  return dir_path
+end
+
+function M.get_repos_dir()
+  return M.get_dirpath { M.file_parent(Nvim), 'repos', }.filename
+end
+
+function M.get_my_dirs()
+  return {
+    M.rep(DataSub),
+    M.rep(Depei),
+    M.get_repos_dir(),
+    M.rep(vim.fn.expand [[$HOME]]),
+    M.rep(vim.fn.expand [[$TEMP]]),
+    M.rep(vim.fn.expand [[$LOCALAPPDATA]]),
+    M.rep(vim.fn.stdpath 'config'),
+    M.rep(vim.fn.stdpath 'data'),
+    M.rep(vim.fn.expand [[$VIMRUNTIME]]),
+  }
 end
 
 return M
