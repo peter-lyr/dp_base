@@ -69,11 +69,11 @@ function M.concant_info(prefix, info)
 end
 
 function M.getlua(luafile)
-  local loaded = string.match(luafile, '.+lua/(.+)%.lua')
+  local loaded = string.match(M.rep(luafile), '.+lua\\(.+)%.lua')
   if not loaded then
     return ''
   end
-  loaded = string.gsub(loaded, '/', '.')
+  loaded = string.gsub(loaded, '\\', '.')
   return loaded
 end
 
@@ -862,6 +862,29 @@ function M.get_only_name(file)
     only_name = string.match(only_name, '.+%\\(.+)$')
   end
   return only_name
+end
+
+function M.get_functions_of_m(m)
+  if not m.lua then
+    print('no M.lua, please check!')
+    return
+  end
+  print("vim.inspect(m):", vim.inspect(m))
+  print("m.lua:", m.lua)
+  local functions = {}
+  for k, v in pairs(m) do
+    if type(v) == 'function' and string.sub(k, 1, 1) ~= '_' then
+      functions[#functions + 1] = k
+    end
+  end
+  table.sort(functions)
+  M.ui_sel(functions, 'test', function(func)
+    if not func then
+      return
+    end
+    pcall(M.cmd, "lua require('%s').%s()", m.lua, func)
+    pcall(M.print, "lua require('%s').%s()", m.lua, func)
+  end)
 end
 
 return M
