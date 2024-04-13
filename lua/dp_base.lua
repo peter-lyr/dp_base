@@ -1014,4 +1014,37 @@ function M.get_SHGetFolderPath(name)
   return {}
 end
 
+function M.read_table_from_file(file)
+  file = M.new_file(file)
+  if not file:exists() then
+    return nil
+  end
+  local res = file:read()
+  if #res > 0 then
+    res = loadstring('return ' .. res)()
+    if res then
+      return res
+    end
+  end
+  return nil
+end
+
+function M.write_table_to_file(file, tbl)
+  M.new_file(file):write(vim.inspect(tbl), 'w')
+end
+
+function M.scan_dirs(dir, pattern)
+  if not dir then
+    dir = vim.loop.cwd()
+  end
+  local entries = require 'plenary.scandir'.scan_dir(dir, { hidden = false, depth = 64, add_dirs = true, })
+  local dirs = {}
+  for _, entry in ipairs(entries) do
+    if M.is(M.new_file(entry):is_dir()) and (not pattern or string.match(entry, pattern)) then
+      dirs[#dirs + 1] = entry
+    end
+  end
+  return dirs
+end
+
 return M
