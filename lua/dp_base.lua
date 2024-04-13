@@ -1047,4 +1047,30 @@ function M.scan_dirs(dir, pattern)
   return dirs
 end
 
+function M.win_max_height()
+  local cur_winnr = vim.fn.winnr()
+  local cur_wininfo = vim.fn.getwininfo(vim.fn.win_getid())[1]
+  local cur_start_col = cur_wininfo['wincol']
+  local cur_end_col = cur_start_col + cur_wininfo['width']
+  local winids = {}
+  local winids_dict = {}
+  for winnr = 1, vim.fn.winnr '$' do
+    local wininfo = vim.fn.getwininfo(vim.fn.win_getid(winnr))[1]
+    local start_col = wininfo['wincol']
+    local end_col = start_col + wininfo['width']
+    if start_col > cur_end_col or end_col < cur_start_col then
+    else
+      local winid = vim.fn.win_getid(winnr)
+      if winnr ~= cur_winnr and vim.api.nvim_win_get_option(winid, 'winfixheight') == true then
+        winids[#winids + 1] = winid
+        winids_dict[winid] = wininfo['height']
+      end
+    end
+  end
+  vim.cmd 'wincmd _'
+  for _, winid in ipairs(winids) do
+    vim.api.nvim_win_set_height(winid, winids_dict[winid] + (#vim.o.winbar > 0 and 1 or 0))
+  end
+end
+
 return M
