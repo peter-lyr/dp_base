@@ -864,13 +864,11 @@ function M.get_only_name(file)
   return only_name
 end
 
-function M.get_functions_of_m(m)
+function M.sel_run(m)
   if not m.lua then
     print('no M.lua, please check!')
     return
   end
-  print("vim.inspect(m):", vim.inspect(m))
-  print("m.lua:", m.lua)
   local functions = {}
   for k, v in pairs(m) do
     if type(v) == 'function' and string.sub(k, 1, 1) ~= '_' then
@@ -883,7 +881,6 @@ function M.get_functions_of_m(m)
       return
     end
     pcall(M.cmd, "lua require('%s').%s()", m.lua, func)
-    pcall(M.print, "lua require('%s').%s()", m.lua, func)
   end)
 end
 
