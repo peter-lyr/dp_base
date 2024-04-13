@@ -924,6 +924,7 @@ M.source = M.getsource(debug.getinfo(1)['source'])
 M.dot_dir = M.get_source_dot_dir(M.source)
 M.lua = M.getlua(M.source)
 M.copy2clip_exe = M.get_file(M.dot_dir, 'copy2clip.exe')
+M.scan_git_repos_py = M.get_file(M.dot_dir, 'scan_git_repos.py')
 
 function M.is_sure(str_format, ...)
   local prompt = string.format(str_format, ...)
