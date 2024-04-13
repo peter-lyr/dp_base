@@ -611,6 +611,10 @@ function M.getcreate_filepath(dirs, file)
   return file_path
 end
 
+function M.getcreate_file(dirs, file)
+  return M.getcreate_filepath(dirs, file).filename
+end
+
 function M.relpath(file, start)
   if not M.is(file) then
     return
