@@ -271,7 +271,12 @@ function M.get_source_dot_dir(source, ext)
   if string.sub(tail, 1, 1) ~= '.' then
     tail = '.' .. tail
   end
-  return string.format('%s\\%s.%s', root, tail, ext)
+  if ext then
+    ext = '.' .. ext
+  else
+    ext = ''
+  end
+  return string.format('%s\\%s%s', root, tail, ext)
 end
 
 function M.setreg()
@@ -908,5 +913,9 @@ function M.get_head_dir()
   end
   return vim.loop.cwd()
 end
+
+M.source = M.getsource(debug.getinfo(1)['source'])
+M.lua = M.getlua(M.source)
+M.copy2clip_exe = M.get_filepath(M.get_source_dot_dir(M.source), 'copy2clip.exe').filename
 
 return M
