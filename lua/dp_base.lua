@@ -1087,4 +1087,13 @@ function M.l(var, val)
   end
 end
 
+function M.get_path_dirs()
+  local temp = vim.split(vim.fn.getenv 'path', ';')
+  local dirs = {}
+  for _, i in ipairs(temp) do
+    M.stack_item_uniq(dirs, i)
+  end
+  return dirs
+end
+
 return M
