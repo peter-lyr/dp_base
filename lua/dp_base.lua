@@ -1073,4 +1073,12 @@ function M.win_max_height()
   end
 end
 
+function M.b(m, desc)
+  local temp = vim.fn.join(vim.fn.split(desc, '_'))
+  if m.lua then
+    return m.lua .. ': ' .. temp
+  end
+  return temp
+end
+
 return M
