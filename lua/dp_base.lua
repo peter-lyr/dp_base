@@ -1081,4 +1081,10 @@ function M.b(m, desc)
   return temp
 end
 
+function M.l(var, val)
+  if not var then
+    var = val
+  end
+end
+
 return M
