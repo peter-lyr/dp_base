@@ -13,6 +13,10 @@ M.NOT_BIN_EXTS = {
   'bat', 'cmd',
 }
 
+M.yanking = nil
+
+M.temp_maps = {}
+
 function M.check_plugins(plugins)
   local fails = {}
   local temp = require 'lazy.core.config'.plugins
@@ -286,6 +290,7 @@ function M.get_source_dot_dir(source, ext)
 end
 
 function M.setreg()
+  M.yanking = 1
   local bak = vim.fn.getreg '"'
   local save_cursor = vim.fn.getpos '.'
   local line = vim.fn.trim(vim.fn.getline '.')
@@ -326,6 +331,7 @@ function M.setreg()
     pcall(vim.fn.setpos, '.', save_cursor)
   end
   vim.fn.setreg('"', bak)
+  M.yanking = nil
 end
 
 if not DataLazyPlugins then
@@ -1125,5 +1131,61 @@ function M.get_path_dirs()
   end
   return dirs
 end
+
+vim.on_key(function(c)
+  if M.yanking then
+    return
+  end
+  if #M.temp_maps == 0 then
+    return
+  end
+  local temp = {}
+  for i in string.gmatch(c, '.') do
+    temp[#temp + 1] = string.byte(i, 1)
+  end
+  if #temp > 1 or #temp == 0 then
+    return
+  end
+  for _, val in ipairs(M.temp_maps) do
+    if temp[1] == vim.fn.char2nr(val[1]) then
+      return
+    end
+  end
+  for _, val in ipairs(M.temp_maps) do
+    local mode = val['mode']
+    local lhs = val[1]
+    M.set_timeout(100, function()
+      M.del_map(mode, lhs)
+    end)
+  end
+  M.temp_maps = {}
+end)
+
+-- function M.temp_map(tbl)
+--   if not M.is(tbl) then
+--     return
+--   end
+--   M.temp_maps = vim.deepcopy(tbl)
+--   M.lazy_map(vim.tbl_values(tbl))
+-- end
+--
+-- function M.hh()
+--   require 'dp_tabline'.b_prev_buf()
+-- end
+--
+-- function M.ll()
+--   require 'dp_tabline'.b_next_buf()
+-- end
+--
+-- function M.test()
+--   M.temp_map {
+--     { 'l', function() M.ll() end, mode = { 'n', 'v', }, silent = true, desc = 'nvim.treesitter: go_to_context', },
+--     { 'h', function() M.hh() end, mode = { 'n', 'v', }, silent = true, desc = 'nvim.treesitter: go_to_context', },
+--   }
+-- end
+--
+-- M.lazy_map {
+--   { '<c-f11>', function() M.test() end, mode = { 'n', 'v', }, silent = true, desc = 'test', },
+-- }
 
 return M
