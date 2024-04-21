@@ -17,6 +17,35 @@ M.yanking = nil
 
 M.temp_maps = {}
 
+M.chars = {
+  'A', 'a', '0',
+  'B', 'b', '1',
+  'C', 'c', '2',
+  'D', 'd', '3',
+  'E', 'e', '4',
+  'F', 'f', '5',
+  'G', 'g', '6',
+  'H', 'h', '7',
+  'I', 'i', '8',
+  'J', 'j', '9',
+  'K', 'k', '0',
+  'L', 'l',
+  'M', 'm',
+  'N', 'n',
+  'O', 'o',
+  'P', 'p',
+  'Q', 'q',
+  'R', 'r',
+  'S', 's',
+  'T', 't',
+  'U', 'u',
+  'V', 'v',
+  'W', 'w',
+  'X', 'x',
+  'Y', 'y',
+  'Z', 'z',
+}
+
 function M.check_plugins(plugins)
   local fails = {}
   local temp = require 'lazy.core.config'.plugins
@@ -1151,6 +1180,9 @@ vim.on_key(function(c)
       return
     end
   end
+  if not M.is_in_tbl(c, M.chars) then
+    return
+  end
   for _, val in ipairs(M.temp_maps) do
     M.set_timeout(100, function()
       M.del_map(val['mode'], val[1])
@@ -1159,31 +1191,44 @@ vim.on_key(function(c)
   M.temp_maps = {}
 end)
 
--- function M.temp_map(tbl)
---   if not M.is(tbl) then
---     return
---   end
---   M.temp_maps = vim.deepcopy(tbl)
---   M.lazy_map(vim.tbl_values(tbl))
--- end
---
--- function M.hh()
---   require 'dp_tabline'.b_prev_buf()
--- end
---
--- function M.ll()
---   require 'dp_tabline'.b_next_buf()
--- end
---
--- function M.test()
---   M.temp_map {
---     { 'l', function() M.ll() end, mode = { 'n', 'v', }, silent = true, desc = 'nvim.treesitter: go_to_context', },
---     { 'h', function() M.hh() end, mode = { 'n', 'v', }, silent = true, desc = 'nvim.treesitter: go_to_context', },
---   }
--- end
---
--- M.lazy_map {
---   { '<c-f11>', function() M.test() end, mode = { 'n', 'v', }, silent = true, desc = 'test', },
--- }
+function M.temp_map(tbl)
+  if not M.is(tbl) then
+    return
+  end
+  M.temp_maps = vim.deepcopy(tbl)
+  M.lazy_map(vim.tbl_values(tbl))
+end
+
+--[[
+   [ vim.on_key(function(c)
+   [   local temp = {}
+   [   for i in string.gmatch(c, '.') do
+   [     temp[#temp + 1] = string.byte(i, 1)
+   [   end
+   [   if #temp > 1 or #temp == 0 then
+   [     return
+   [   end
+   [   vim.fn.writefile({ vim.inspect(temp), c }, 'C:\\c.txt', 'a')
+   [ end)
+   [
+   [ function M.hh()
+   [   require 'dp_tabline'.b_prev_buf()
+   [ end
+   [
+   [ function M.ll()
+   [   require 'dp_tabline'.b_next_buf()
+   [ end
+   [
+   [ function M.test()
+   [   M.temp_map {
+   [     { 'l', function() M.ll() end, mode = { 'n', 'v', }, silent = true, desc = 'nvim.treesitter: go_to_context', },
+   [     { 'h', function() M.hh() end, mode = { 'n', 'v', }, silent = true, desc = 'nvim.treesitter: go_to_context', },
+   [   }
+   [ end
+   [
+   [ M.lazy_map {
+   [   { '<c-f11>', function() M.test() end, mode = { 'n', 'v', }, silent = true, desc = 'test', },
+   [ }
+   ]]
 
 return M
