@@ -1152,10 +1152,8 @@ vim.on_key(function(c)
     end
   end
   for _, val in ipairs(M.temp_maps) do
-    local mode = val['mode']
-    local lhs = val[1]
     M.set_timeout(100, function()
-      M.del_map(mode, lhs)
+      M.del_map(val['mode'], val[1])
     end)
   end
   M.temp_maps = {}
