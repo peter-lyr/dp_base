@@ -1188,6 +1188,11 @@ vim.on_key(function(c)
       M.del_map(val['mode'], val[1])
     end)
   end
+  temp = {}
+  for _, i in ipairs(M.temp_maps) do
+    temp[#temp+1] = i[1]
+  end
+  M.notify_info('canceled: ' .. vim.inspect(temp))
   M.temp_maps = {}
 end)
 
