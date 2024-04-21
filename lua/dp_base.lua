@@ -222,12 +222,18 @@ function M.index_of(array, value)
   return -1
 end
 
-function M.stack_item_uniq(tbl, item)
+function M.pop_item(tbl, item)
   if M.is(tbl) then
     local index = M.index_of(tbl, item)
     if index ~= -1 then
       table.remove(tbl, index)
     end
+  end
+end
+
+function M.stack_item_uniq(tbl, item)
+  if M.is(tbl) then
+    M.pop_item(tbl, item)
     tbl[#tbl + 1] = item
   end
 end
@@ -466,6 +472,12 @@ function M.set_timeout(timeout, callback)
   end, { ['repeat'] = 1, })
 end
 
+function M.set_timeout_2(timeout, times, callback)
+  return vim.fn.timer_start(timeout, function()
+    callback()
+  end, { ['repeat'] = times, })
+end
+
 function M.set_interval(interval, callback)
   return vim.fn.timer_start(interval, function()
     callback()
@@ -511,6 +523,10 @@ function M.copyright(ext, callback)
       end
     end,
   })
+end
+
+function M.del_map(mode, lhs)
+  pcall(vim.keymap.del, mode, lhs)
 end
 
 function M.lazy_map(tbls)
@@ -1085,6 +1101,20 @@ function M.l(var, val)
   if not var then
     var = val
   end
+end
+
+function M.is_tbl_equal(tbl1, tbl2)
+  if #tbl1 ~= #tbl2 then
+    return nil
+  end
+  table.sort(tbl1)
+  table.sort(tbl2)
+  for i = 1, #tbl1 do
+    if tbl1[i] ~= tbl2[i] then
+      return nil
+    end
+  end
+  return 1
 end
 
 function M.get_path_dirs()
