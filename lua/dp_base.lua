@@ -1143,7 +1143,7 @@ vim.on_key(function(c)
   for i in string.gmatch(c, '.') do
     temp[#temp + 1] = string.byte(i, 1)
   end
-  if #temp > 1 or #temp == 0 then
+  if #temp ~= 1 then
     return
   end
   for _, val in ipairs(M.temp_maps) do
