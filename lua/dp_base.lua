@@ -1184,11 +1184,11 @@ vim.on_key(function(c)
       M.del_map(val['mode'], val[1])
     end)
   end
-  temp = {}
+  temp = { 'canceled:', }
   for _, i in ipairs(M.temp_maps) do
-    temp[i[1]] = i['desc']
+    temp[#temp + 1] = string.format('[%s] %s', i[1], i['desc'])
   end
-  M.notify_info('canceled: ' .. vim.inspect(temp))
+  M.notify_info_timeout(temp, 1000 * 60 * 60 * 24)
   M.temp_maps = {}
 end)
 
@@ -1197,11 +1197,11 @@ function M.temp_map(tbl)
     return
   end
   M.temp_maps = vim.deepcopy(tbl)
-  local temp = {}
+  local temp = { 'ready:', }
   for _, i in ipairs(M.temp_maps) do
-    temp[i[1]] = i['desc']
+    temp[#temp + 1] = string.format('[%s] %s', i[1], i['desc'])
   end
-  M.notify_info_timeout('ready: ' .. vim.inspect(temp), 1000 * 60)
+  M.notify_info_timeout(temp, 1000 * 60 * 60 * 24)
   M.lazy_map(vim.tbl_values(tbl))
 end
 
