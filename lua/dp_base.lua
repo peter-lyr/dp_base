@@ -1048,7 +1048,7 @@ end
 function M.read_table_from_file(file)
   file = M.new_file(file)
   if not file:exists() then
-    return nil
+    return {}
   end
   local res = file:read()
   if #res > 0 then
@@ -1057,7 +1057,7 @@ function M.read_table_from_file(file)
       return res
     end
   end
-  return nil
+  return {}
 end
 
 function M.write_table_to_file(file, tbl)
