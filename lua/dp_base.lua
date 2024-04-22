@@ -1181,6 +1181,11 @@ function M.temp_map(tbl)
     return
   end
   M.temp_maps = vim.deepcopy(tbl)
+  local temp = {}
+  for _, i in ipairs(M.temp_maps) do
+    temp[i[1]] = i['desc']
+  end
+  M.notify_info('ready: ' .. vim.inspect(temp))
   M.lazy_map(vim.tbl_values(tbl))
 end
 
