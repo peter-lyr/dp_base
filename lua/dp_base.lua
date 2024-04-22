@@ -110,7 +110,7 @@ function M.set_win_md_ft(win)
   vim.api.nvim_win_set_option(win, 'conceallevel', 3)
 end
 
-function M.notify_info(message)
+function M.notify_info(message, timeout)
   local messages = type(message) == 'table' and message or { message, }
   local title = ''
   if #messages > 1 then
@@ -122,23 +122,7 @@ function M.notify_info(message)
     title = title,
     animate = false,
     on_open = M.set_win_md_ft,
-    timeout = 1000 * 8,
-  })
-end
-
-function M.notify_info_timeout(message, timeout)
-  local messages = type(message) == 'table' and message or { message, }
-  local title = ''
-  if #messages > 1 then
-    title = table.remove(messages, 1)
-  end
-  require 'notify'.dismiss()
-  message = vim.fn.join(messages, '\n')
-  vim.notify(message, 'info', {
-    title = title,
-    animate = false,
-    on_open = M.set_win_md_ft,
-    timeout = timeout,
+    timeout = timeout or (1000 * 8),
   })
 end
 
@@ -153,7 +137,7 @@ function M.notify_info_append(message)
     title = title,
     animate = false,
     on_open = M.set_win_md_ft,
-    timeout = 1000 * 8,
+    timeout = timeout or (1000 * 8),
   })
 end
 
@@ -169,7 +153,7 @@ function M.notify_error(message)
     title = title,
     animate = false,
     on_open = M.set_win_md_ft,
-    timeout = 1000 * 8,
+    timeout = timeout or (1000 * 8),
   })
 end
 
@@ -184,7 +168,7 @@ function M.notify_error_append(message)
     title = title,
     animate = false,
     on_open = M.set_win_md_ft,
-    timeout = 1000 * 8,
+    timeout = timeout or (1000 * 8),
   })
 end
 
@@ -1188,7 +1172,7 @@ vim.on_key(function(c)
   for _, i in ipairs(M.temp_maps) do
     temp[#temp + 1] = string.format('[%s] %s', i[1], i['desc'])
   end
-  M.notify_info_timeout(temp, 1000 * 60 * 60 * 24)
+  M.notify_info(temp, 1000 * 60 * 60 * 24)
   M.temp_maps = {}
 end)
 
@@ -1201,7 +1185,7 @@ function M.temp_map(tbl)
   for _, i in ipairs(M.temp_maps) do
     temp[#temp + 1] = string.format('[%s] %s', i[1], i['desc'])
   end
-  M.notify_info_timeout(temp, 1000 * 60 * 60 * 24)
+  M.notify_info(temp, 1000 * 60 * 60 * 24)
   M.lazy_map(vim.tbl_values(tbl))
 end
 
