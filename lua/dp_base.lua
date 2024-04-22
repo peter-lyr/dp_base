@@ -126,6 +126,22 @@ function M.notify_info(message)
   })
 end
 
+function M.notify_info_timeout(message, timeout)
+  local messages = type(message) == 'table' and message or { message, }
+  local title = ''
+  if #messages > 1 then
+    title = table.remove(messages, 1)
+  end
+  require 'notify'.dismiss()
+  message = vim.fn.join(messages, '\n')
+  vim.notify(message, 'info', {
+    title = title,
+    animate = false,
+    on_open = M.set_win_md_ft,
+    timeout = timeout,
+  })
+end
+
 function M.notify_info_append(message)
   local messages = type(message) == 'table' and message or { message, }
   local title = ''
@@ -1185,7 +1201,7 @@ function M.temp_map(tbl)
   for _, i in ipairs(M.temp_maps) do
     temp[i[1]] = i['desc']
   end
-  M.notify_info('ready: ' .. vim.inspect(temp))
+  M.notify_info_timeout('ready: ' .. vim.inspect(temp), 1000 * 60)
   M.lazy_map(vim.tbl_values(tbl))
 end
 
