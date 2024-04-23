@@ -244,6 +244,20 @@ function M.pop_item(tbl, item)
   end
 end
 
+function M.stack_item(tbl, item, len)
+  local res = {}
+  if M.is(tbl) and tbl[#tbl] == item then
+    return res
+  end
+  if #tbl >= len then
+    for _ = 1, #tbl - len + 1 do
+      res[#res + 1] = table.remove(tbl, 1)
+    end
+  end
+  tbl[#tbl + 1] = item
+  return res
+end
+
 function M.stack_item_uniq(tbl, item)
   if M.is(tbl) then
     M.pop_item(tbl, item)
