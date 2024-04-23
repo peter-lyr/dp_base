@@ -795,48 +795,67 @@ EOF
   return M.rep(vim.g.normpath)
 end
 
+function M.uniq_sort(tbl)
+  local temp = {}
+  for _, i in ipairs(tbl) do
+    M.stack_item_uniq(temp, i)
+  end
+  table.sort(temp)
+  return temp
+end
+
 function M.get_cfile(cfile)
+  local temp
   if not cfile then
-    cfile = M.normpath(M.format('%s\\%s', vim.fn.expand '%:p:h', vim.fn.expand '<cfile>'))
-    if M.is(cfile) and M.is_file(cfile) then
-      return cfile
+    temp = M.normpath(M.format('%s\\%s', vim.fn.expand '%:p:h', vim.fn.expand '<cfile>'))
+    if M.is(temp) and M.is_file(temp) then
+      return temp
     else
-      cfile = M.normpath(M.format('%s\\%s', vim.fn.expand '%:p:h', string.match(vim.fn.getline '.', '`([^`]+)`')))
-      if M.is(cfile) and M.is_file(cfile) then
-        return cfile
+      temp = M.normpath(M.format('%s\\%s', vim.fn.expand '%:p:h', string.match(vim.fn.getline '.', '`([^`]+)`')))
+      if M.is(temp) and M.is_file(temp) then
+        return temp
       end
     end
-    cfile = M.normpath(M.format('%s\\%s', vim.loop.cwd(), vim.fn.expand '<cfile>'))
-    if M.is(cfile) and M.is_file(cfile) then
-      return cfile
+    temp = M.normpath(M.format('%s\\%s', vim.loop.cwd(), vim.fn.expand '<cfile>'))
+    if M.is(temp) and M.is_file(temp) then
+      return temp
     else
-      cfile = M.normpath(M.format('%s\\%s', vim.loop.cwd(), string.match(vim.fn.getline '.', '`([^`]+)`')))
-      if M.is(cfile) and M.is_file(cfile) then
-        return cfile
+      temp = M.normpath(M.format('%s\\%s', vim.loop.cwd(), string.match(vim.fn.getline '.', '`([^`]+)`')))
+      if M.is(temp) and M.is_file(temp) then
+        return temp
       end
     end
-    cfile = M.normpath(M.format('%s\\%s', vim.fn.expand '%:p:h', vim.fn.expand '<cfile>'))
-    if M.is(cfile) and M.is_dir(cfile) then
-      return cfile
+    temp = M.normpath(M.format('%s\\%s', vim.fn.expand '%:p:h', vim.fn.expand '<cfile>'))
+    if M.is(temp) and M.is_dir(temp) then
+      return temp
     else
-      cfile = M.normpath(M.format('%s\\%s', vim.fn.expand '%:p:h', string.match(vim.fn.getline '.', '`([^`]+)`')))
-      if M.is(cfile) and M.is_dir(cfile) then
-        return cfile
+      temp = M.normpath(M.format('%s\\%s', vim.fn.expand '%:p:h', string.match(vim.fn.getline '.', '`([^`]+)`')))
+      if M.is(temp) and M.is_dir(temp) then
+        return temp
       end
     end
-    cfile = M.normpath(M.format('%s\\%s', vim.loop.cwd(), vim.fn.expand '<cfile>'))
-    if M.is(cfile) and M.is_dir(cfile) then
-      return cfile
+    temp = M.normpath(M.format('%s\\%s', vim.loop.cwd(), vim.fn.expand '<cfile>'))
+    if M.is(temp) and M.is_dir(temp) then
+      return temp
     else
-      cfile = M.normpath(M.format('%s\\%s', vim.loop.cwd(), string.match(vim.fn.getline '.', '`([^`]+)`')))
-      if M.is(cfile) and M.is_dir(cfile) then
-        return cfile
+      temp = M.normpath(M.format('%s\\%s', vim.loop.cwd(), string.match(vim.fn.getline '.', '`([^`]+)`')))
+      if M.is(temp) and M.is_dir(temp) then
+        return temp
       end
     end
   end
-  cfile = M.normpath(M.format('%s\\%s', vim.fn.expand '%:p:h', cfile))
-  if M.is(cfile) and M.is_dir(cfile) then
-    return cfile
+  local tt = string.match(vim.fn.getline '.', '`([^:]+:[^`]+)`')
+  if tt then
+    local repo, relpath = unpack(vim.split(tt, ':'))
+    for _, path in ipairs(M.get_path_dir()) do
+      if M.is_dir(path .. '/' .. repo) then
+        return path .. '/' .. repo .. '/' .. relpath
+      end
+    end
+  end
+  temp = M.normpath(M.format('%s\\%s', vim.fn.expand '%:p:h', cfile))
+  if M.is(temp) and M.is_dir(temp) then
+    return temp
   end
   return M.normpath(M.format('%s\\%s', vim.loop.cwd(), cfile))
 end
@@ -1003,6 +1022,16 @@ end
 
 function M.get_repos_dir()
   return M.get_dirpath { M.file_parent(Nvim), 'repos', }.filename
+end
+
+function M.get_path_dir()
+  return M.uniq_sort {
+    M.rep(M.get_repos_dir()),
+    M.rep(DepeiTemp),
+    M.rep(Depei),
+    M.rep(Home),
+    M.rep(DataSub),
+  }
 end
 
 function M.get_my_dirs()
