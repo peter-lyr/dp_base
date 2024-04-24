@@ -50,6 +50,7 @@ M.check_plugins {
   'git@github.com:peter-lyr/dp_init',
   'git@github.com:peter-lyr/dp_asyncrun',
   'dbakker/vim-projectroot',
+  'rcarriga/nvim-notify',
 }
 
 local dp_asyncrun = require 'dp_asyncrun'
