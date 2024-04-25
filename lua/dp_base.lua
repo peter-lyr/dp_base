@@ -406,6 +406,11 @@ function M.system_cd(file)
   end
 end
 
+
+M.done_default = dp_asyncrun.done_default
+M.done_append_default = dp_asyncrun.done_append_default
+M.done_replace_default = dp_asyncrun.done_replace_default
+
 function M.system_run(way, str_format, ...)
   if type(str_format) == 'table' then
     str_format = vim.fn.join(str_format, ' && ')
@@ -424,13 +429,13 @@ function M.system_run(way, str_format, ...)
       M.timer_temp = vim.fn.timer_start(10, function()
         if vim.g.asyncrun_status ~= 'running' then
           pcall(vim.fn.timer_stop, M.timer_temp)
-          dp_asyncrun.done_default()
+          M.done_default()
           vim.cmd(cmd)
         end
       end, { ['repeat'] = -1, })
     else
       vim.cmd(cmd)
-      dp_asyncrun.done_default()
+      M.done_default()
     end
   elseif way == 'term' then
     cmd = string.format('wincmd s|term %s', cmd)
