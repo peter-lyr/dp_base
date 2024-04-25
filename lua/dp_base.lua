@@ -127,7 +127,7 @@ function M.notify_info(message, timeout)
   })
 end
 
-function M.notify_info_append(message)
+function M.notify_info_append(message, timeout)
   local messages = type(message) == 'table' and message or { message, }
   local title = ''
   if #messages > 1 then
@@ -142,7 +142,7 @@ function M.notify_info_append(message)
   })
 end
 
-function M.notify_error(message)
+function M.notify_error(message, timeout)
   local messages = type(message) == 'table' and message or { message, }
   local title = ''
   if #messages > 1 then
@@ -158,7 +158,7 @@ function M.notify_error(message)
   })
 end
 
-function M.notify_error_append(message)
+function M.notify_error_append(message, timeout)
   local messages = type(message) == 'table' and message or { message, }
   local title = ''
   if #messages > 1 then
