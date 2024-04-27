@@ -1280,4 +1280,15 @@ end
    [ }
    ]]
 
+function M.get_all_git_repos(force)
+  local all_git_repos_txt = M.getcreate_file(DataSub, 'all_git_repos.txt')
+  local repos = vim.fn.readfile(all_git_repos_txt)
+  if #repos == 0 or force then
+    M.system_run('start', 'chcp 65001 && python "%s" "%s"', M.scan_git_repos_py, all_git_repos_txt)
+    M.notify_info 'scan_git_repos, try again later.'
+    return nil
+  end
+  return repos
+end
+
 return M
