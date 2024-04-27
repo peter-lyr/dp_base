@@ -406,7 +406,6 @@ function M.system_cd(file)
   end
 end
 
-
 M.done_default = dp_asyncrun.done_default
 M.done_append_default = dp_asyncrun.done_append_default
 M.done_replace_default = dp_asyncrun.done_replace_default
@@ -900,6 +899,17 @@ function M.jump_or_split(file)
     vim.cmd 'wincmd s'
   end
   M.cmd('e %s', file)
+end
+
+function M.wingoto_file_or_open(file)
+  local winnr = vim.fn.bufwinnr(vim.fn.bufnr(file))
+  if winnr ~= -1 then
+    vim.fn.win_gotoid(vim.fn.win_getid(winnr))
+    return 1
+  end
+  vim.cmd 'wincmd s'
+  M.cmd('e %s', file)
+  return nil
 end
 
 function M.find_its_place_to_open(file)
