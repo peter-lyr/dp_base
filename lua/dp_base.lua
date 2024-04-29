@@ -442,15 +442,21 @@ function M.system_run(way, str_format, ...)
   else
     return
   end
+  return cmd
 end
 
 function M.system_run_histadd(way, str_format, ...)
-  M.system_run(way, str_format, ...)
-  vim.fn.histadd(':', cmd)
+  local cmd = M.system_run(way, str_format, ...)
+  if cmd then
+    vim.fn.histadd(':', cmd)
+  end
 end
 
 function M.cmd_histadd(str_format, ...)
-  vim.fn.histadd(':', M.cmd(str_format, ...))
+  local cmd = M.cmd(str_format, ...)
+  if cmd then
+    vim.fn.histadd(':', cmd)
+  end
 end
 
 function M.format(str_format, ...)
@@ -466,8 +472,11 @@ end
 
 function M.cmd(str_format, ...)
   local cmd = string.format(str_format, ...)
-  vim.cmd(cmd)
-  return cmd
+  local _sta, _ = pcall(vim.cmd, cmd)
+  if _sta then
+    return cmd
+  end
+  return nil
 end
 
 function M.new_file(file)
