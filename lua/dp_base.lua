@@ -49,6 +49,7 @@ end
 M.check_plugins {
   'git@github.com:peter-lyr/dp_init',
   'git@github.com:peter-lyr/dp_asyncrun',
+  'git@github.com:peter-lyr/sha2',
   'dbakker/vim-projectroot',
   'rcarriga/nvim-notify',
 }
@@ -506,6 +507,11 @@ end
 
 function M.rep(content)
   content = string.gsub(content, '/', '\\')
+  return vim.fn.tolower(content)
+end
+
+function M.rep_slash(content)
+  content = string.gsub(content, '\\', '/')
   return vim.fn.tolower(content)
 end
 
@@ -1298,6 +1304,26 @@ function M.get_all_git_repos(force)
     return nil
   end
   return repos
+end
+
+function M.getcreate_temp_dirpath(dirs)
+  dirs = M.totable(dirs)
+  table.insert(dirs, 1, DepeiTemp)
+  return M.getcreate_dirpath(dirs)
+end
+
+function M.count_char(str, char)
+  local count = 0
+  for i = 1, #str do
+    if str:sub(i, i) == char then
+      count = count + 1
+    end
+  end
+  return count
+end
+
+function M.get_hash(file)
+  return require 'sha2'.sha256(require 'plenary.path':new(file):_read())
 end
 
 return M
