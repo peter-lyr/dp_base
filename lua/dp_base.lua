@@ -1082,6 +1082,7 @@ end
 function M.get_my_dirs()
   return {
     M.rep(DataSub),
+    M.rep(DepeiTemp),
     M.rep(Depei),
     M.get_repos_dir(),
     M.rep(vim.fn.expand [[$HOME]]),
