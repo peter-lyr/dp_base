@@ -1098,7 +1098,7 @@ function M.get_drivers()
   local drivers = {}
   for i = 1, 26 do
     local driver = vim.fn.nr2char(64 + i) .. ':\\'
-    if B.is(vim.fn.isdirectory(driver)) then
+    if M.is(vim.fn.isdirectory(driver)) then
       drivers[#drivers + 1] = driver
     end
   end
