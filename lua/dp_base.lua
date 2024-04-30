@@ -1327,4 +1327,21 @@ function M.get_hash(file)
   return require 'sha2'.sha256(require 'plenary.path':new(file):_read())
 end
 
+function M.jump_or_edit(file)
+  file = M.rep(file)
+  local file_proj = M.get_proj_root(file)
+  for winnr = 1, vim.fn.winnr '$' do
+    local bufnr = vim.fn.winbufnr(winnr)
+    local fname = M.rep(vim.api.nvim_buf_get_name(bufnr))
+    if M.file_exists(fname) then
+      local proj = M.get_proj_root(fname)
+      if M.is(proj) and file_proj == proj then
+        vim.fn.win_gotoid(vim.fn.win_getid(winnr))
+        break
+      end
+    end
+  end
+  M.cmd('e %s', file)
+end
+
 return M
