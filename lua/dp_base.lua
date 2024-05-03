@@ -1355,4 +1355,54 @@ function M.jump_or_edit(file)
   M.cmd('e %s', file)
 end
 
+local function callback_rhs(lhs, mode)
+  for _, v in ipairs(vim.api.nvim_get_keymap(mode)) do
+    if vim.fn.tolower(v.lhs) == vim.fn.tolower(lhs) then
+      local callback = nil
+      local rhs = nil
+      if v.callback then
+        callback = v.callback
+      elseif v.rhs then
+        rhs = v.rhs
+      end
+      return { callback, rhs, v.desc, }
+    end
+  end
+  return nil
+end
+
+local function old_callback(rhs)
+  if rhs[1] then
+    return function()
+      rhs[1]()
+    end
+  elseif rhs[2] then
+    return function()
+      local r = string.gsub(rhs[2], '<Cmd>', ':')
+      r = string.gsub(r, '\\', '')
+      r = string.gsub(r, '<', '\\<')
+      r = string.gsub(r, '^:', ':\\<C-u>')
+      vim.cmd(string.format([[call feedkeys("%s")]], r))
+    end
+  else
+    return function() end
+  end
+end
+
+function M.map_add(lhs, mode, new, desc)
+  local rhs = callback_rhs(lhs, mode)
+  if rhs and M.is_in_str(desc, rhs[3]) then
+    return
+  end
+  local old = old_callback(rhs)
+  vim.keymap.set({ mode, }, lhs, function()
+    old()
+    new()
+  end, { desc = (rhs and rhs[3] and #rhs[3] > 0) and rhs[3] .. ' & ' .. desc or desc, })
+end
+
+-- M.map_add('qq', 'n', function()
+--   print('test')
+-- end, 'test')
+
 return M
