@@ -1258,7 +1258,7 @@ vim.on_key(function(c)
       M.del_map(val['mode'], val[1])
     end)
   end
-  temp = { 'canceled:', }
+  temp = { 'canceled:' .. c, }
   for _, i in ipairs(M.temp_maps) do
     temp[#temp + 1] = string.format('[%s] %s', i[1], i['desc'])
   end
