@@ -16,6 +16,7 @@ M.NOT_BIN_EXTS = {
 M.yanking = nil
 
 M.temp_maps = {}
+M.exclude_chars = {}
 
 M.chars = {
   'a', 'b', 'c', 'd', 'e',
@@ -1249,6 +1250,9 @@ vim.on_key(function(c)
   if not M.is_in_tbl(c, M.chars) then
     return
   end
+  if M.is_in_tbl(c, M.exclude_chars) then
+    return
+  end
   for _, val in ipairs(M.temp_maps) do
     M.set_timeout(100, function()
       M.del_map(val['mode'], val[1])
@@ -1262,11 +1266,12 @@ vim.on_key(function(c)
   M.temp_maps = {}
 end)
 
-function M.temp_map(tbl)
+function M.temp_map(tbl, exclude_chars)
   if not M.is(tbl) then
     return
   end
   M.temp_maps = vim.deepcopy(tbl)
+  M.exclude_chars = vim.deepcopy(M.totable(exclude_chars))
   local temp = { 'ready:', }
   for _, i in ipairs(M.temp_maps) do
     temp[#temp + 1] = string.format('[%s] %s', i[1], i['desc'])
