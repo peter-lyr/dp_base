@@ -1410,4 +1410,14 @@ end
 --   print('test')
 -- end, 'test')
 
+function M.cmd_escape(text)
+  text = string.gsub(text, '>', '^>')
+  text = string.gsub(text, '<', '^<')
+  text = string.gsub(text, '%^', '^^')
+  text = string.gsub(text, '%%', '^%')
+  text = string.gsub(text, '&', '^&')
+  text = string.gsub(text, '|', '^|')
+  return text
+end
+
 return M
