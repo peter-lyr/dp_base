@@ -1420,4 +1420,100 @@ function M.cmd_escape(text)
   return text
 end
 
+M.aescrypt_exe = M.get_file(M.dot_dir, 'aescrypt.exe')
+
+function M.encrypt_do(ifile, ofile, pass)
+  vim.fn.system(string.format('%s -e -p %s -o %s %s', M.aescrypt_exe, pass, ofile, ifile))
+  M.cmd('Bdelete %s', ifile)
+  if M.file_exists(ofile) then
+    M.system_run('start silent', [[del /s /q %s]], ifile)
+    require 'nvim-tree.api'.tree.reload()
+  end
+end
+
+function M.encrypt(ifile, ofile, pass)
+  if not ifile then
+    ifile = M.buf_get_name()
+  end
+  if not M.is_file(ifile) then
+    print(string.format("## %s# %d", debug.getinfo(1)['source'], debug.getinfo(1)['currentline']))
+    return
+  end
+  if not ofile then
+    ofile = vim.fn.fnamemodify(ifile, ':p:r') .. '.bin'
+  end
+  if not M.is(pass) then
+    pass = vim.fn.fnamemodify(ifile, ':p:t:r')
+  end
+  M.encrypt_do(ifile, ofile, pass)
+end
+
+function M.encrypt_secret(ifile, ofile)
+  if not ifile then
+    ifile = M.buf_get_name()
+  end
+  if not ofile then
+    ofile = vim.fn.fnamemodify(ifile, ':p:r') .. '.bin'
+  end
+  local pass = vim.fn.inputsecret '> '
+  if not M.is(pass) then
+    pass = vim.fn.fnamemodify(ifile, ':p:t:r')
+  end
+  M.encrypt_do(ifile, ofile, pass)
+end
+
+function M.decrypt_do(ifile, ofile, pass)
+  vim.fn.system(string.format('%s -d -p %s -o %s %s', M.aescrypt_exe, pass, ofile, ifile))
+  if M.file_exists(ofile) then
+    M.system_run('start silent', [[del /s /q %s]], ifile)
+    require 'nvim-tree.api'.tree.reload()
+  end
+end
+
+function M.decrypt(ifile, ofile, pass)
+  if not ifile then
+    ifile = M.buf_get_name()
+  end
+  if not M.is_file(ifile) then
+    return
+  end
+  if not ofile then
+    ofile = vim.fn.fnamemodify(ifile, ':p:r') .. '.md'
+  end
+  if not M.is(pass) then
+    pass = vim.fn.fnamemodify(ifile, ':p:t:r')
+  end
+  M.decrypt_do(ifile, ofile, pass)
+end
+
+function M.decrypt_secret(ifile, ofile)
+  if not ifile then
+    ifile = M.buf_get_name()
+  end
+  if not ofile then
+    ofile = vim.fn.fnamemodify(ifile, ':p:r') .. '.md'
+  end
+  local pass = vim.fn.inputsecret '> '
+  if not M.is(pass) then
+    pass = vim.fn.fnamemodify(ifile, ':p:t:r')
+  end
+  M.decrypt_do(ifile, ofile, pass)
+end
+
+-- vim.api.nvim_create_user_command('CryptEn', function(params)
+--   M.encrypt(unpack(params['fargs']))
+-- end, { nargs = '*', })
+--
+-- vim.api.nvim_create_user_command('CryptEnSecret', function(params)
+--   M.encrypt_secret(unpack(params['fargs']))
+-- end, { nargs = '*', })
+--
+-- vim.api.nvim_create_user_command('CryptDe', function(params)
+--   M.decrypt(unpack(params['fargs']))
+-- end, { nargs = '*', })
+--
+-- vim.api.nvim_create_user_command('CryptDeSecret', function(params)
+--   M.decrypt_secret(unpack(params['fargs']))
+-- end, { nargs = '*', })
+
 return M
