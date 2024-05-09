@@ -1422,18 +1422,23 @@ end
 
 M.aescrypt_exe = M.get_file(M.dot_dir, 'aescrypt.exe')
 
--- TODO: https://sourceforge.net/projects/sevenzip/加解密套个解压缩
-
 M._7z_exe = M.get_file(M.dot_dir, '7z.exe')
 
+-- TODO: https://sourceforge.net/projects/sevenzip/加解密套个解压缩
+-- 先压缩再加密,格式为7z
+-- 先解密再解压
+-- 密码不区分大小写
+
 function M.encrypt_do(ifile, ofile, pass)
-  vim.fn.system(string.format('%s -e -p %s -o %s %s', M.aescrypt_exe, pass, ofile, ifile))
+  vim.fn.system(string.format('%s a %s.7z %s', M._7z_exe, ifile, ifile))
+  vim.fn.system(string.format('%s -e -p %s -o %s %s.7z', M.aescrypt_exe, pass, ofile, ifile))
   M.cmd('Bdelete %s', ifile)
   if M.file_exists(ofile) then
     M.system_run('start silent', [[del /s /q %s]], M.rep(ifile))
     require 'nvim-tree.api'.tree.reload()
     M.jump_or_edit(ofile)
   end
+  M.system_run('start silent', [[del /s /q %s.7z]], M.rep(ifile))
 end
 
 function M.encrypt(ifile, ofile, pass)
@@ -1449,6 +1454,7 @@ function M.encrypt(ifile, ofile, pass)
   if not M.is(pass) then
     pass = vim.fn.fnamemodify(ifile, ':p:t')
   end
+  pass = vim.fn.tolower(pass)
   M.encrypt_do(ifile, ofile, pass)
 end
 
@@ -1463,16 +1469,19 @@ function M.encrypt_secret(ifile, ofile)
   if not M.is(pass) then
     pass = vim.fn.fnamemodify(ifile, ':p:t')
   end
+  pass = vim.fn.tolower(pass)
   M.encrypt_do(ifile, ofile, pass)
 end
 
 function M.decrypt_do(ifile, ofile, pass)
-  vim.fn.system(string.format('%s -d -p %s -o %s %s', M.aescrypt_exe, pass, ofile, ifile))
+  vim.fn.system(string.format('%s -d -p %s -o %s.7z %s', M.aescrypt_exe, pass, ofile, ifile))
+  vim.fn.system(string.format('%s e %s.7z', M._7z_exe, ofile))
   if M.file_exists(ofile) then
     M.jump_or_edit(ofile)
     M.system_run('start silent', [[del /s /q %s]], M.rep(ifile))
     require 'nvim-tree.api'.tree.reload()
   end
+  M.system_run('start silent', [[del /s /q %s.7z]], M.rep(ofile))
 end
 
 function M.decrypt(ifile, ofile, pass)
@@ -1488,6 +1497,7 @@ function M.decrypt(ifile, ofile, pass)
   if not M.is(pass) then
     pass = vim.fn.fnamemodify(ifile, ':p:t:r')
   end
+  pass = vim.fn.tolower(pass)
   M.decrypt_do(ifile, ofile, pass)
 end
 
@@ -1502,6 +1512,7 @@ function M.decrypt_secret(ifile, ofile)
   if not M.is(pass) then
     pass = vim.fn.fnamemodify(ifile, ':p:t:r')
   end
+  pass = vim.fn.tolower(pass)
   M.decrypt_do(ifile, ofile, pass)
 end
 
