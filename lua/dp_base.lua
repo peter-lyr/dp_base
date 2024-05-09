@@ -1440,10 +1440,10 @@ function M.encrypt(ifile, ofile, pass)
     return
   end
   if not ofile then
-    ofile = vim.fn.fnamemodify(ifile, ':p:r') .. '.bin'
+    ofile = vim.fn.fnamemodify(ifile, ':p') .. '.bin'
   end
   if not M.is(pass) then
-    pass = vim.fn.fnamemodify(ifile, ':p:t:r')
+    pass = vim.fn.fnamemodify(ifile, ':p:t')
   end
   M.encrypt_do(ifile, ofile, pass)
 end
@@ -1453,11 +1453,11 @@ function M.encrypt_secret(ifile, ofile)
     ifile = M.buf_get_name()
   end
   if not ofile then
-    ofile = vim.fn.fnamemodify(ifile, ':p:r') .. '.bin'
+    ofile = vim.fn.fnamemodify(ifile, ':p') .. '.bin'
   end
   local pass = vim.fn.inputsecret '> '
   if not M.is(pass) then
-    pass = vim.fn.fnamemodify(ifile, ':p:t:r')
+    pass = vim.fn.fnamemodify(ifile, ':p:t')
   end
   M.encrypt_do(ifile, ofile, pass)
 end
@@ -1479,7 +1479,7 @@ function M.decrypt(ifile, ofile, pass)
     return
   end
   if not ofile then
-    ofile = vim.fn.fnamemodify(ifile, ':p:r') .. '.md'
+    ofile = vim.fn.fnamemodify(ifile, ':p:r')
   end
   if not M.is(pass) then
     pass = vim.fn.fnamemodify(ifile, ':p:t:r')
@@ -1492,7 +1492,7 @@ function M.decrypt_secret(ifile, ofile)
     ifile = M.buf_get_name()
   end
   if not ofile then
-    ofile = vim.fn.fnamemodify(ifile, ':p:r') .. '.md'
+    ofile = vim.fn.fnamemodify(ifile, ':p:r')
   end
   local pass = vim.fn.inputsecret '> '
   if not M.is(pass) then
