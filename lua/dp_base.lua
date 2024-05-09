@@ -1428,6 +1428,7 @@ function M.encrypt_do(ifile, ofile, pass)
   if M.file_exists(ofile) then
     M.system_run('start silent', [[del /s /q %s]], ifile)
     require 'nvim-tree.api'.tree.reload()
+    M.jump_or_edit(ofile)
   end
 end
 
@@ -1436,7 +1437,6 @@ function M.encrypt(ifile, ofile, pass)
     ifile = M.buf_get_name()
   end
   if not M.is_file(ifile) then
-    print(string.format("## %s# %d", debug.getinfo(1)['source'], debug.getinfo(1)['currentline']))
     return
   end
   if not ofile then
@@ -1465,6 +1465,7 @@ end
 function M.decrypt_do(ifile, ofile, pass)
   vim.fn.system(string.format('%s -d -p %s -o %s %s', M.aescrypt_exe, pass, ofile, ifile))
   if M.file_exists(ofile) then
+    M.jump_or_edit(ofile)
     M.system_run('start silent', [[del /s /q %s]], ifile)
     require 'nvim-tree.api'.tree.reload()
   end
