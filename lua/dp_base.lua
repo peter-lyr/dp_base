@@ -1517,4 +1517,6 @@ end
 --   M.decrypt_secret(unpack(params['fargs']))
 -- end, { nargs = '*', })
 
+-- TODO: http://stahlworks.com/dev/zip.exe加解密套个解压缩
+
 return M
