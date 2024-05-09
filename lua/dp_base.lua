@@ -1422,6 +1422,10 @@ end
 
 M.aescrypt_exe = M.get_file(M.dot_dir, 'aescrypt.exe')
 
+-- TODO: https://sourceforge.net/projects/sevenzip/加解密套个解压缩
+
+M._7z_exe = M.get_file(M.dot_dir, '7z.exe')
+
 function M.encrypt_do(ifile, ofile, pass)
   vim.fn.system(string.format('%s -e -p %s -o %s %s', M.aescrypt_exe, pass, ofile, ifile))
   M.cmd('Bdelete %s', ifile)
@@ -1516,7 +1520,5 @@ end
 -- vim.api.nvim_create_user_command('CryptDeSecret', function(params)
 --   M.decrypt_secret(unpack(params['fargs']))
 -- end, { nargs = '*', })
-
--- TODO: http://stahlworks.com/dev/zip.exe加解密套个解压缩
 
 return M
