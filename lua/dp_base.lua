@@ -1480,6 +1480,8 @@ function M.decrypt_do(ifile, ofile, pass)
     M.jump_or_edit(ofile)
     M.system_run('start silent', [[del /s /q %s]], M.rep(ifile))
     require 'nvim-tree.api'.tree.reload()
+  else
+    M.notify_error_append 'maybe password is incorrect'
   end
   M.system_run('start silent', [[del /s /q %s.7z]], M.rep(ofile))
 end
