@@ -1477,6 +1477,7 @@ function M.decrypt_do(ifile, ofile, pass)
   vim.fn.system(string.format('%s -d -p %s -o %s.7z %s', M.aescrypt_exe, pass, ofile, ifile))
   vim.fn.system(string.format('%s && %s e %s.7z', M.system_cd(ofile), M._7z_exe, ofile))
   if M.file_exists(ofile) then
+    M.cmd('Bdelete %s', ifile)
     M.jump_or_edit(ofile)
     M.system_run('start silent', [[del /s /q %s]], M.rep(ifile))
     require 'nvim-tree.api'.tree.reload()
