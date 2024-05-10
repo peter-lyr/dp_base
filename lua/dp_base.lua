@@ -1519,20 +1519,12 @@ function M.decrypt_secret(ifile, ofile)
   M.decrypt_do(ifile, ofile, pass)
 end
 
--- vim.api.nvim_create_user_command('CryptEn', function(params)
---   M.encrypt(unpack(params['fargs']))
--- end, { nargs = '*', })
---
--- vim.api.nvim_create_user_command('CryptEnSecret', function(params)
---   M.encrypt_secret(unpack(params['fargs']))
--- end, { nargs = '*', })
---
--- vim.api.nvim_create_user_command('CryptDe', function(params)
---   M.decrypt(unpack(params['fargs']))
--- end, { nargs = '*', })
---
--- vim.api.nvim_create_user_command('CryptDeSecret', function(params)
---   M.decrypt_secret(unpack(params['fargs']))
--- end, { nargs = '*', })
+function M.get_telescope_cur_root()
+  return M.read_table_from_file(TelecopeCurRootTxt)
+end
+
+function M.get_telescope_cur_roots()
+  return M.read_table_from_file(TelecopeCurRootsTxt)
+end
 
 return M
