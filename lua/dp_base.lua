@@ -1440,13 +1440,12 @@ function M.encrypt_do(ifile, ofile, pass)
     python << EOF
 import vim
 ifile = vim.eval('g:ifile')
-print(ifile)
 with open(ifile, 'rb') as f:
   l = f.readlines()[0]
 if l[:3] == b'AES' and b'aescrypt 3.10' in l and b'CREATED_BY' in l:
   vim.command('let g:encrypted = 1')
-    EOF
-    ]]
+EOF
+]]
   if vim.g.encrypted then
     M.notify_info_append 'already encrypted!'
     return
