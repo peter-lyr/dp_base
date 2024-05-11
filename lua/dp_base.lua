@@ -1428,6 +1428,7 @@ M._7z_exe = M.get_file(M.dot_dir, '7z.exe')
 -- 先压缩再加密,格式为7z
 -- 先解密再解压
 -- 密码不区分大小写
+-- a.md -> a_md.bin -> a.md
 
 function M.encrypt_do(ifile, ofile, pass)
   vim.fn.system(string.format('%s a %s.7z %s', M._7z_exe, ifile, ifile))
