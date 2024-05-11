@@ -1431,9 +1431,26 @@ M._7z_exe = M.get_file(M.dot_dir, '7z.exe')
 -- 密码不区分大小写
 --
 -- [ ] TODO: xxxx.yy -> xxxx_yy.bin -> xxxx.yy
--- [ ] TODO: xxxx_yy.bin --encrypt--> not working
+-- [x] TODODONE: xxxx_yy.bin --encrypt--> not working
 
 function M.encrypt_do(ifile, ofile, pass)
+  vim.g.encrypted = nil
+  vim.g.ifile = ifile
+  vim.cmd [[
+    python << EOF
+import vim
+ifile = vim.eval('g:ifile')
+print(ifile)
+with open(ifile, 'rb') as f:
+  l = f.readlines()[0]
+if l[:3] == b'AES' and b'aescrypt 3.10' in l and b'CREATED_BY' in l:
+  vim.command('let g:encrypted = 1')
+    EOF
+    ]]
+  if vim.g.encrypted then
+    M.notify_info_append 'already encrypted!'
+    return
+  end
   vim.fn.system(string.format('%s a %s.7z %s', M._7z_exe, ifile, ifile))
   vim.fn.system(string.format('%s -e -p %s -o %s %s.7z', M.aescrypt_exe, pass, ofile, ifile))
   if M.file_exists(ofile) then
