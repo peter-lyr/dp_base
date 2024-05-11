@@ -1424,11 +1424,12 @@ M.aescrypt_exe = M.get_file(M.dot_dir, 'aescrypt.exe')
 
 M._7z_exe = M.get_file(M.dot_dir, '7z.exe')
 
--- TODO: https://sourceforge.net/projects/sevenzip/加解密套个解压缩
+-- [x] TODODONE: https://sourceforge.net/projects/sevenzip/加解密套个解压缩
+--
 -- 先压缩再加密,格式为7z
 -- 先解密再解压
 -- 密码不区分大小写
--- a.md -> a_md.bin -> a.md
+-- [ ] TODO: xxxx.yy -> xxxx_yy.bin -> xxxx.yy
 
 function M.encrypt_do(ifile, ofile, pass)
   vim.fn.system(string.format('%s a %s.7z %s', M._7z_exe, ifile, ifile))
