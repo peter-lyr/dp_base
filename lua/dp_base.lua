@@ -1431,6 +1431,7 @@ M._7z_exe = M.get_file(M.dot_dir, '7z.exe')
 -- 密码不区分大小写
 --
 -- [ ] TODO: xxxx.yy -> xxxx_yy.bin -> xxxx.yy
+-- [ ] TODO: xxxx_yy.bin --encrypt--> not working
 
 function M.encrypt_do(ifile, ofile, pass)
   vim.fn.system(string.format('%s a %s.7z %s', M._7z_exe, ifile, ifile))
