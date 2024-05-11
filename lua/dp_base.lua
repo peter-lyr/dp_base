@@ -1429,6 +1429,7 @@ M._7z_exe = M.get_file(M.dot_dir, '7z.exe')
 -- 先压缩再加密,格式为7z
 -- 先解密再解压
 -- 密码不区分大小写
+--
 -- [ ] TODO: xxxx.yy -> xxxx_yy.bin -> xxxx.yy
 
 function M.encrypt_do(ifile, ofile, pass)
