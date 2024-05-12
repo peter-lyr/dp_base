@@ -714,7 +714,7 @@ function M.get_file_dirs(file)
   for _ = 1, 24 do
     file_path = file_path:parent()
     local name = M.rep(file_path.filename)
-    dirs[#dirs + 1] = name
+    M.stack_item_uniq(dirs, name)
     if not string.match(name, '\\') then
       break
     end
