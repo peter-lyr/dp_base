@@ -385,7 +385,7 @@ try:
   import luadata
 except:
   import os
-  os.sytem('pip install -i https://pypi.tuna.tsinghua.edu.cn/simple --trusted-host mirrors.aliyun.com luadata')
+  os.system('pip install -i https://pypi.tuna.tsinghua.edu.cn/simple --trusted-host mirrors.aliyun.com luadata')
   import luadata
 patt = vim.eval('g:patt')
 string = vim.eval('g:str')
