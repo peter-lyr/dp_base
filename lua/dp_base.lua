@@ -839,10 +839,15 @@ function M.uniq_sort(tbl)
   return temp
 end
 
+function M.expand_cfile()
+  local cfile = vim.split(vim.fn.expand '<cfile>', '=')
+  return cfile[#cfile]
+end
+
 function M.get_cfile(cfile)
   local temp
   if not cfile then
-    temp = M.normpath(M.format('%s\\%s', vim.fn.expand '%:p:h', vim.fn.expand '<cfile>'))
+    temp = M.normpath(M.format('%s\\%s', vim.fn.expand '%:p:h', M.expand_cfile()))
     if M.is(temp) and M.is_file(temp) then
       return temp
     else
@@ -851,7 +856,7 @@ function M.get_cfile(cfile)
         return temp
       end
     end
-    temp = M.normpath(M.format('%s\\%s', vim.loop.cwd(), vim.fn.expand '<cfile>'))
+    temp = M.normpath(M.format('%s\\%s', vim.loop.cwd(), M.expand_cfile))
     if M.is(temp) and M.is_file(temp) then
       return temp
     else
@@ -860,7 +865,7 @@ function M.get_cfile(cfile)
         return temp
       end
     end
-    temp = M.normpath(M.format('%s\\%s', vim.fn.expand '%:p:h', vim.fn.expand '<cfile>'))
+    temp = M.normpath(M.format('%s\\%s', vim.fn.expand '%:p:h', M.expand_cfile()))
     if M.is(temp) and M.is_dir(temp) then
       return temp
     else
@@ -869,7 +874,7 @@ function M.get_cfile(cfile)
         return temp
       end
     end
-    temp = M.normpath(M.format('%s\\%s', vim.loop.cwd(), vim.fn.expand '<cfile>'))
+    temp = M.normpath(M.format('%s\\%s', vim.loop.cwd(), M.expand_cfile))
     if M.is(temp) and M.is_dir(temp) then
       return temp
     else
