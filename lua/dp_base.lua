@@ -715,7 +715,7 @@ function M.get_file_dirs(file)
     file_path = file_path:parent()
     local name = M.rep(file_path.filename)
     dirs[#dirs + 1] = name
-    if not string.match(name, '/') then
+    if not string.match(name, '\\') then
       break
     end
   end
