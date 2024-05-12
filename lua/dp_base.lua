@@ -1552,4 +1552,15 @@ function M.get_telescope_cur_roots()
   return M.read_table_from_file(TelecopeCurRootsTxt)
 end
 
+function M.get_rel_path()
+  local cfile = M.expand_cfile()
+  local line = ''
+  if M.is_file(cfile) then
+    line = M.relpath(cfile, vim.fn.fnamemodify(M.buf_get_name(), ':p:h'))
+  else
+    line = M.relpath(cfile, M.buf_get_name())
+  end
+  vim.fn.append('.', line)
+end
+
 return M
