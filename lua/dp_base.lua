@@ -1086,7 +1086,7 @@ function M.get_path_dir()
 end
 
 function M.get_my_dirs()
-  return {
+  return M.uniq_sort {
     M.rep(DataSub),
     M.rep(DepeiTemp),
     M.rep(Depei),
@@ -1108,7 +1108,7 @@ function M.get_drivers()
       drivers[#drivers + 1] = driver
     end
   end
-  return drivers
+  return M.uniq_sort(drivers)
 end
 
 function M.get_SHGetFolderPath(name)
