@@ -1584,4 +1584,61 @@ function M.get_rel_path()
   vim.fn.append('.', line)
 end
 
+function M.filter_exclude(tbl, patterns)
+  return vim.tbl_filter(function(str)
+    if M.match_string_or(str, patterns) then
+      return false
+    end
+    return true
+  end, tbl)
+end
+
+function M.get_programs_files()
+  local all_programs = M.get_SHGetFolderPath 'all_programs'
+  if M.is(all_programs) then
+    local files = {}
+    for _, programs in ipairs(all_programs) do
+      local a = M.scan_files_deep(programs, { filetypes = { 'lnk', }, })
+      a = M.filter_exclude(a, { '卸载', 'uninst', 'Uninst', })
+      files = M.merge_tables(files, a)
+    end
+    return files
+  end
+  return {}
+end
+
+function M.get_path_files()
+  local files = {}
+  for programs in string.gmatch(vim.fn.system 'echo %path%', '([^;]+);') do
+    local a = M.scan_files_deep(programs, { filetypes = { 'lnk', }, })
+    a = M.filter_exclude(a, { '卸载', 'uninst', 'Uninst', })
+    files = M.merge_tables(files, a)
+  end
+  return files
+end
+
+function M.get_running_executables()
+  local exes = {}
+  for exe in string.gmatch(vim.fn.system 'tasklist', '([^\n]+.exe)') do
+    exe = vim.fn.tolower(exe)
+    if not M.is_in_tbl(exe, exes) then
+      exes[#exes + 1] = exe
+    end
+  end
+  return exes
+end
+
+function M.get_startup_files()
+  local all_startup = M.get_SHGetFolderPath 'all_startup'
+  if M.is(all_startup) then
+    local files = {}
+    for _, start_up in ipairs(all_startup) do
+      local a = M.scan_files_deep(start_up, { filetypes = { 'lnk', }, })
+      files = M.merge_tables(files, a)
+    end
+    return files
+  end
+  return {}
+end
+
 return M
