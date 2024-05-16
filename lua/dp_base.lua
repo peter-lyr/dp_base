@@ -1071,13 +1071,34 @@ function M.get_dirpath(dirs)
   return dir_path
 end
 
+function M.get_dirs_equal(dname, root_dir, opt)
+  if not root_dir then
+    root_dir = M.get_proj_root()
+  end
+  local default_opt = { hidden = false, depth = 32, add_dirs = true, }
+  opt = vim.tbl_deep_extend('force', default_opt, opt or {})
+  local entries = require 'plenary.scandir'.scan_dir(root_dir, opt)
+  local dirs = {}
+  for _, entry in ipairs(entries) do
+    entry = M.rep(entry)
+    if require 'plenary.path':new(entry):is_dir() then
+      local name = M.get_only_name(entry)
+      if name == dname then
+        dirs[#dirs + 1] = entry
+      end
+    end
+  end
+  return dirs
+end
+
 function M.get_repos_dir()
-  return M.get_dirpath { M.file_parent(Nvim), 'repos', }.filename
+  print(string.format("## %s# %d", debug.getinfo(1)['source'], debug.getinfo(1)['currentline']))
+  return M.get_dirpath { Depei, 'repos', }.filename
 end
 
 function M.get_path_dir()
   return M.uniq_sort {
-    M.rep(M.get_repos_dir()),
+    M.rep(DepeiRepos),
     M.rep(DepeiTemp),
     M.rep(Depei),
     M.rep(Home),
@@ -1090,7 +1111,7 @@ function M.get_my_dirs()
     M.rep(DataSub),
     M.rep(DepeiTemp),
     M.rep(Depei),
-    M.get_repos_dir(),
+    M.rep(DepeiRepos),
     M.rep(vim.fn.expand [[$HOME]]),
     M.rep(vim.fn.expand [[$TEMP]]),
     M.rep(vim.fn.expand [[$LOCALAPPDATA]]),
