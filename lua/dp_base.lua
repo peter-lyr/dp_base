@@ -1302,7 +1302,7 @@ function M.temp_map(tbl, exclude_chars)
   for _, i in ipairs(M.temp_maps) do
     temp[#temp + 1] = string.format('[%s] %s', i[1], i['desc'])
   end
-  M.notify_info(temp, 1000 * 60 * 60 * 24)
+  -- M.notify_info(temp, 1000 * 60 * 60 * 24)
   M.lazy_map(vim.tbl_values(tbl))
 end
 
