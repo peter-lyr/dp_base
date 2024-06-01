@@ -1159,6 +1159,9 @@ function M.get_SHGetFolderPath(name)
 end
 
 function M.read_table_from_file(file)
+  if not file then
+    return {}
+  end
   file = M.new_file(file)
   if not file:exists() then
     return {}
