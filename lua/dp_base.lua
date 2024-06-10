@@ -549,24 +549,29 @@ function M.aucmd(event, desc, opts)
   return vim.api.nvim_create_autocmd(event, opts)
 end
 
-function M.copyright(ext, callback)
-  M.aucmd({ 'BufReadPre', }, ext .. '.BufReadPre', {
+function M.copyright(extension, callback)
+  M.aucmd({ 'BufReadPre', }, extension .. '.BufReadPre', {
     callback = function(ev)
       local file = vim.api.nvim_buf_get_name(ev.buf)
+      local ext = string.match(file, '%.([^.]+)$')
       if vim.fn.getfsize(file) == 0 then
         M.set_timeout(10, function()
-          vim.cmd 'norm ggdG'
-          vim.fn.setline(1, {
-            string.format('Copyright (c) %s %s. All Rights Reserved.', vim.fn.strftime '%Y', 'liudepei'),
-            vim.fn.strftime 'create at %Y/%m/%d %H:%M:%S %A',
-          })
-          vim.cmd 'norm gcip'
-          if ext == string.match(file, '%.([^.]+)$') then
-            if callback then
-              callback()
-            else
-              vim.cmd 'norm Go'
-              vim.cmd 'norm S'
+          if ext == 'norg' then
+            vim.cmd 'Neorg inject-metadata'
+          else
+            vim.cmd 'norm ggdG'
+            vim.fn.setline(1, {
+              string.format('Copyright (c) %s %s. All Rights Reserved.', vim.fn.strftime '%Y', 'liudepei'),
+              vim.fn.strftime 'create at %Y/%m/%d %H:%M:%S %A',
+            })
+            vim.cmd 'norm gcip'
+            if ext == string.match(file, '%.([^.]+)$') then
+              if callback then
+                callback()
+              else
+                vim.cmd 'norm Go'
+                vim.cmd 'norm S'
+              end
             end
           end
         end)
@@ -1092,7 +1097,6 @@ function M.get_dirs_equal(dname, root_dir, opt)
 end
 
 function M.get_repos_dir()
-  print(string.format("## %s# %d", debug.getinfo(1)['source'], debug.getinfo(1)['currentline']))
   return M.get_dirpath { Depei, 'repos', }.filename
 end
 
