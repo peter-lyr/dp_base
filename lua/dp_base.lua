@@ -898,6 +898,17 @@ function M.get_cfile(cfile)
       end
     end
   end
+  local norg_path = string.match(vim.fn.getline '.', '{:([^:]+):}%[[^%]]+%]')
+  if norg_path then
+    temp = M.normpath(M.format('%s\\%s', vim.fn.expand '%:p:h', norg_path))
+    if M.is(temp) and M.is_file(temp) then
+      return temp
+    end
+    temp = M.normpath(M.format('%s\\%s', vim.loop.cwd(), norg_path))
+    if M.is(temp) and M.is_file(temp) then
+      return temp
+    end
+  end
   temp = M.normpath(M.format('%s\\%s', vim.fn.expand '%:p:h', cfile))
   if M.is(temp) and M.is_dir(temp) then
     return temp
