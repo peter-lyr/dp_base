@@ -57,6 +57,10 @@ M.check_plugins {
 
 local dp_asyncrun = require 'dp_asyncrun'
 
+M.ignore_dirs = {
+  '.git',
+}
+
 function M.merge_other_functions(m, luas)
   if not luas then
     return
