@@ -1662,4 +1662,30 @@ function M.get_startup_files()
   return {}
 end
 
+function M.get_paragraph()
+  local paragraph = {}
+  local linenr = vim.fn.line '.'
+  local lines = 0
+  for i = linenr, 1, -1 do
+    local line = vim.fn.getline(i)
+    if #line > 0 then
+      lines = lines + 1
+      table.insert(paragraph, 1, line)
+    else
+      M.markdowntable_line = i + 1
+      break
+    end
+  end
+  for i = linenr + 1, vim.fn.line '$' do
+    local line = vim.fn.getline(i)
+    if #line > 0 then
+      table.insert(paragraph, line)
+      lines = lines + 1
+    else
+      break
+    end
+  end
+  return paragraph
+end
+
 return M
