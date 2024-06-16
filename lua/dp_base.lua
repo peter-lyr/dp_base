@@ -1688,4 +1688,8 @@ function M.get_paragraph()
   return paragraph
 end
 
+function M.not_allow_in_file_name(text)
+  return string.match(vim.fn.fnamemodify(text, ":t:r"), '[~\\/:%*%?"<>|]')
+end
+
 return M
