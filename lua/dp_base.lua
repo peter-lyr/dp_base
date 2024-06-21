@@ -1703,4 +1703,21 @@ function M.not_allow_in_file_name(text)
   return string.match(vim.fn.fnamemodify(text, ":t:r"), '[~\\/:%*%?"<>|]')
 end
 
+function M.find_dir_till_git(cur_filetypes, search_files, cur_file)
+  if not cur_file then
+    cur_file = M.buf_get_name()
+  end
+  if not M.is_file_in_filetypes(cur_file, cur_filetypes) then
+    return
+  end
+  for _, dir in ipairs(M.get_file_dirs_till_git(cur_file)) do
+    for _, file in ipairs(search_files) do
+      file = M.get_file(dir, file)
+      if M.file_exists(file) then
+        return dir
+      end
+    end
+  end
+end
+
 return M
