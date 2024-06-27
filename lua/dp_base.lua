@@ -935,12 +935,12 @@ function M.jump_or_split(file)
   file = M.rep(file)
   local file_proj = M.get_proj_root(file)
   local jumped = nil
-  for winnr = 1, vim.fn.winnr '$' do
+  for winnr = vim.fn.winnr '$', 1, -1 do
     local bufnr = vim.fn.winbufnr(winnr)
     local fname = M.rep(vim.api.nvim_buf_get_name(bufnr))
     if M.file_exists(fname) then
       local proj = M.get_proj_root(fname)
-      if M.is(proj) and file_proj == proj then
+      if not M.is(proj) or M.is(proj) and file_proj == proj then
         vim.fn.win_gotoid(vim.fn.win_getid(winnr))
         jumped = 1
         break
@@ -1405,12 +1405,12 @@ end
 function M.jump_or_edit(file)
   file = M.rep(file)
   local file_proj = M.get_proj_root(file)
-  for winnr = 1, vim.fn.winnr '$' do
+  for winnr = vim.fn.winnr '$', 1, -1 do
     local bufnr = vim.fn.winbufnr(winnr)
     local fname = M.rep(vim.api.nvim_buf_get_name(bufnr))
     if M.file_exists(fname) then
       local proj = M.get_proj_root(fname)
-      if M.is(proj) and file_proj == proj then
+      if not M.is(proj) or M.is(proj) and file_proj == proj then
         vim.fn.win_gotoid(vim.fn.win_getid(winnr))
         break
       end
