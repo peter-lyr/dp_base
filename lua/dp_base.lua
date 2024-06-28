@@ -1723,4 +1723,24 @@ function M.find_dir_till_git(cur_filetypes, search_files, cur_file)
   end
 end
 
+function M.string_split_char_to_table(str)
+  vim.g.str = str
+  vim.g.arr = {}
+  vim.cmd [[
+    python << EOF
+str = vim.eval('g:str')
+vim.command(f'let g:arr = {list(str)}')
+EOF
+  ]]
+  return vim.g.arr
+  -- NOTE: 以下两种方式是按字符去分割，不是我想要的
+  --
+  -- return vim.split(str, '')
+  -- local arr = {}
+  -- for s in string.gmatch(str, '.') do
+  --   arr[#arr+1] = s
+  -- end
+  -- return arr
+end
+
 return M
