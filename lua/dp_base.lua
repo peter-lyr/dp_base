@@ -1673,9 +1673,12 @@ function M.get_startup_files()
   return {}
 end
 
-function M.get_paragraph()
+function M.get_paragraph(lnr)
   local paragraph = {}
-  local linenr = vim.fn.line '.'
+  if not lnr then
+    lnr = '.'
+  end
+  local linenr = vim.fn.line(lnr)
   local lines = 0
   for i = linenr, 1, -1 do
     local line = vim.fn.getline(i)
