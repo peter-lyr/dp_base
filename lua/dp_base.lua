@@ -1723,6 +1723,26 @@ function M.find_dir_till_git(cur_filetypes, search_files, cur_file)
   end
 end
 
+function M.get_char_index_of_arr(byte_index, arr)
+  vim.g.arr = arr
+  vim.g.byte_index = byte_index
+  vim.g.char_index = 0
+  vim.cmd [[
+    python << EOF
+byte_index = int(vim.eval('g:byte_index'))
+arr = vim.eval('g:arr')
+cnt = 0
+for i in range(1, len(arr) + 1):
+  s = arr[i-1]
+  cnt += len(s.encode('utf-8'))
+  if cnt >= byte_index:
+    vim.command(f'let g:char_index = {i}')
+    break
+EOF
+  ]]
+  return vim.g.char_index
+end
+
 function M.string_split_char_to_table(str)
   vim.g.str = str
   vim.g.arr = {}
