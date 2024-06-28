@@ -1763,4 +1763,8 @@ EOF
   -- return arr
 end
 
+function M.get_text_in_bracket(text)
+  return string.match(text, '%[([^%]]+)%]')
+end
+
 return M
