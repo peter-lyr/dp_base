@@ -1250,6 +1250,25 @@ function M.win_max_height()
   end
 end
 
+function M.win_max_width()
+  local cur_winnr = vim.fn.winnr()
+  local winids = {}
+  local winids_dict = {}
+  for winnr = 1, vim.fn.winnr '$' do
+    local wininfo = vim.fn.getwininfo(vim.fn.win_getid(winnr))[1]
+    local winid = vim.fn.win_getid(winnr)
+    if winnr ~= cur_winnr and vim.api.nvim_win_get_option(winid, 'winfixwidth') == true then
+      winids[#winids + 1] = winid
+      winids_dict[winid] = wininfo['width']
+    end
+  end
+  vim.cmd 'wincmd |'
+  print("vim.inspect(winids_dict):", vim.inspect(winids_dict))
+  for _, winid in ipairs(winids) do
+    vim.api.nvim_win_set_width(winid, winids_dict[winid])
+  end
+end
+
 function M.b(m, desc)
   local temp = vim.fn.join(vim.fn.split(desc, '_'))
   if m.lua then
