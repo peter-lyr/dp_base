@@ -1803,19 +1803,20 @@ import vim
 import shutil
 import re
 dir = vim.eval('g:dir')
-patt = re.compile(vim.eval('g:patt'))
-F = []
-for f in os.listdir(dir):
-  if re.findall(patt, f):
-    F.append(os.path.join(dir, f))
-for f in F:
-  if os.path.isdir(f):
-    shutil.rmtree(f)
-  else:
-    try:
-      os.remove(f)
-    except Exception as e:
-      pass
+if os.path.isdir(dir):
+  patt = re.compile(vim.eval('g:patt'))
+  F = []
+  for f in os.listdir(dir):
+    if re.findall(patt, f):
+      F.append(os.path.join(dir, f))
+  for f in F:
+    if os.path.isdir(f):
+      shutil.rmtree(f)
+    else:
+      try:
+        os.remove(f)
+      except Exception as e:
+        pass
 EOF
   ]]
 end
