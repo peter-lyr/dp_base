@@ -645,6 +645,9 @@ function M.is_dir(file)
 end
 
 function M.file_parent(file)
+  if not file then
+    file = M.buf_get_name()
+  end
   return M.new_file(file):parent().filename
 end
 
@@ -1100,6 +1103,10 @@ function M.get_dirpath(dirs)
     dir_path = dir_path:joinpath(dir)
   end
   return dir_path
+end
+
+function M.get_dir(dirs)
+  return M.get_dirpath(dirs).filename
 end
 
 function M.get_dirs_equal(dname, root_dir, opt)
@@ -1784,6 +1791,28 @@ end
 
 function M.get_text_in_bracket(text)
   return string.match(text, '%[([^%]]+)%]')
+end
+
+function M.delele_patt_under_dir(patt, dir)
+  vim.g.patt = patt
+  vim.g.dir = dir
+  vim.cmd [[
+  python << EOF
+import os
+import vim
+import shutil
+import re
+dir = vim.eval('g:dir')
+patt = re.compile(vim.eval('g:patt'))
+for f in os.listdir(dir):
+  if re.findall(patt, f):
+    f = os.path.join(dir, f)
+    if os.path.isfile(f):
+      os.remove(f)
+    else:
+      shutil.rmtree(f)
+EOF
+  ]]
 end
 
 return M
