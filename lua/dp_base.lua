@@ -689,6 +689,13 @@ function M.getcreate_filepath(dirs, file)
   return file_path
 end
 
+function M.touch(file)
+  local file_path = M.new_file(file)
+  if not file_path:exists() then
+    file_path:touch()
+  end
+end
+
 function M.getcreate_file(dirs, file)
   return M.getcreate_filepath(dirs, file).filename
 end
@@ -955,7 +962,7 @@ function M.jump_or_split(file)
       local fname = M.rep(vim.api.nvim_buf_get_name(bufnr))
       if M.file_exists(fname) then
         local proj = M.get_proj_root(fname)
-        if not M.is(proj) or M.is(proj) and file_proj == proj then
+        if not M.is(file_proj) or M.is(proj) and file_proj == proj then
           vim.fn.win_gotoid(vim.fn.win_getid(winnr))
           jumped = 1
           break
@@ -1460,7 +1467,7 @@ function M.jump_or_edit(file)
     local fname = M.rep(vim.api.nvim_buf_get_name(bufnr))
     if M.file_exists(fname) then
       local proj = M.get_proj_root(fname)
-      if not M.is(proj) or M.is(proj) and file_proj == proj then
+      if not M.is(file_proj) or M.is(proj) and file_proj == proj then
         vim.fn.win_gotoid(vim.fn.win_getid(winnr))
         M.cmd('e %s', file)
         return
