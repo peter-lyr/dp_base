@@ -942,11 +942,24 @@ function M.jump_or_split(file)
     local bufnr = vim.fn.winbufnr(winnr)
     local fname = M.rep(vim.api.nvim_buf_get_name(bufnr))
     if M.file_exists(fname) then
-      local proj = M.get_proj_root(fname)
-      if not M.is(proj) or M.is(proj) and file_proj == proj then
+      if file == fname then
         vim.fn.win_gotoid(vim.fn.win_getid(winnr))
         jumped = 1
         break
+      end
+    end
+  end
+  if not jumped then
+    for winnr = vim.fn.winnr '$', 1, -1 do
+      local bufnr = vim.fn.winbufnr(winnr)
+      local fname = M.rep(vim.api.nvim_buf_get_name(bufnr))
+      if M.file_exists(fname) then
+        local proj = M.get_proj_root(fname)
+        if not M.is(proj) or M.is(proj) and file_proj == proj then
+          vim.fn.win_gotoid(vim.fn.win_getid(winnr))
+          jumped = 1
+          break
+        end
       end
     end
   end
@@ -1435,14 +1448,25 @@ function M.jump_or_edit(file)
     local bufnr = vim.fn.winbufnr(winnr)
     local fname = M.rep(vim.api.nvim_buf_get_name(bufnr))
     if M.file_exists(fname) then
-      local proj = M.get_proj_root(fname)
-      if not M.is(proj) or M.is(proj) and file_proj == proj then
+      if file == fname then
         vim.fn.win_gotoid(vim.fn.win_getid(winnr))
-        break
+        M.cmd('e %s', file)
+        return
       end
     end
   end
-  M.cmd('e %s', file)
+  for winnr = vim.fn.winnr '$', 1, -1 do
+    local bufnr = vim.fn.winbufnr(winnr)
+    local fname = M.rep(vim.api.nvim_buf_get_name(bufnr))
+    if M.file_exists(fname) then
+      local proj = M.get_proj_root(fname)
+      if not M.is(proj) or M.is(proj) and file_proj == proj then
+        vim.fn.win_gotoid(vim.fn.win_getid(winnr))
+        M.cmd('e %s', file)
+        return
+      end
+    end
+  end
 end
 
 local function callback_rhs(lhs, mode)
