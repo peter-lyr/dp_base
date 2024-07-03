@@ -1474,6 +1474,7 @@ function M.jump_or_edit(file)
       end
     end
   end
+  M.cmd('e %s', file)
 end
 
 local function callback_rhs(lhs, mode)
