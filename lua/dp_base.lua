@@ -696,6 +696,13 @@ function M.touch(file)
   end
 end
 
+function M.mkdir(dir)
+  local dir_path = M.new_file(dir)
+  if not dir_path:exists() then
+    dir_path:mkdir()
+  end
+end
+
 function M.getcreate_file(dirs, file)
   return M.getcreate_filepath(dirs, file).filename
 end
