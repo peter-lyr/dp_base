@@ -1303,6 +1303,11 @@ function M.win_max_width()
   end
 end
 
+function M.win_max_width_height()
+  M.win_max_width()
+  M.win_max_height()
+end
+
 function M.b(m, desc)
   local temp = vim.fn.join(vim.fn.split(desc, '_'))
   if m.lua then
