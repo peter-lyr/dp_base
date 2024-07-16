@@ -1395,6 +1395,7 @@ function M.temp_map(tbl, exclude_chars)
   end
   -- M.notify_info(temp, 1000 * 60 * 60 * 24)
   M.lazy_map(vim.tbl_values(tbl))
+  return temp
 end
 
 --[[
