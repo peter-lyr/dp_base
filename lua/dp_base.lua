@@ -183,16 +183,16 @@ function M.get_short(content, max)
   if not max then
     max = vim.fn.floor(vim.o.columns * 2 / 5)
   end
-  if #content >= (max * 2 - 1) then
+  if #content > (max * 2 + 1) then
     local s1 = ''
     local s2 = ''
-    for i = (max * 2 - 1), 3, -1 do
+    for i = (max * 2 - 1), 0, -1 do
       s2 = string.sub(content, #content - i, #content)
       if vim.fn.strdisplaywidth(s2) <= max then
         break
       end
     end
-    for i = (max * 2 - 1), 3, -1 do
+    for i = (max * 2 - 1), 0, -1 do
       s1 = string.sub(content, 1, i)
       if vim.fn.strdisplaywidth(s1) <= max then
         break
