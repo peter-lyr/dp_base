@@ -785,6 +785,10 @@ function M.get_file_dirs_till_git(file)
   return dirs
 end
 
+function M.get_file_git_root(file)
+  return M.get_file_dirs_till_git(file)[1]
+end
+
 function M.is_file_in_filetypes(file, filetypes)
   if not file then
     file = M.buf_get_name()
