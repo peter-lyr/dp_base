@@ -403,88 +403,6 @@ EOF
   return vim.g.res
 end
 
-function M.system_cd(file)
-  local fpath = M.new_file(file)
-  if fpath:is_dir() then
-    return 'cd /d ' .. file
-  else
-    return 'cd /d ' .. fpath:parent().filename
-  end
-end
-
-M.done_default = dp_asyncrun.done_default
-M.done_append_default = dp_asyncrun.done_append_default
-M.done_replace_default = dp_asyncrun.done_replace_default
-
-function M.system_run(way, str_format, ...)
-  if type(str_format) == 'table' then
-    str_format = vim.fn.join(str_format, ' && ')
-  end
-  local cmd = string.format(str_format, ...)
-  if way == 'start' then
-    cmd = string.format([[silent !start cmd /c "%s"]], cmd)
-    vim.cmd(cmd)
-  elseif way == 'start silent' then
-    cmd = string.format([[silent !start /b /min cmd /c "%s"]], cmd)
-    vim.cmd(cmd)
-  elseif way == 'asyncrun' then
-    vim.cmd 'AsyncStop'
-    cmd = string.format('AsyncRun %s', cmd)
-    if vim.g.asyncrun_status == 'running' then
-      M.timer_temp = vim.fn.timer_start(10, function()
-        if vim.g.asyncrun_status ~= 'running' then
-          pcall(vim.fn.timer_stop, M.timer_temp)
-          M.done_default()
-          vim.cmd(cmd)
-        end
-      end, { ['repeat'] = -1, })
-    else
-      vim.cmd(cmd)
-      M.done_default()
-    end
-  elseif way == 'term' then
-    cmd = string.format('wincmd s|term %s', cmd)
-    vim.cmd(cmd)
-  else
-    return
-  end
-  return cmd
-end
-
-function M.system_run_histadd(way, str_format, ...)
-  local cmd = M.system_run(way, str_format, ...)
-  if cmd then
-    vim.fn.histadd(':', cmd)
-  end
-end
-
-function M.cmd_histadd(str_format, ...)
-  local cmd = M.cmd(str_format, ...)
-  if cmd then
-    vim.fn.histadd(':', cmd)
-  end
-end
-
-function M.format(str_format, ...)
-  return string.format(str_format, ...)
-end
-
-function M.get_proj_root(file)
-  if file then
-    return M.rep(vim.fn['ProjectRootGet'](file))
-  end
-  return M.rep(vim.fn['ProjectRootGet']())
-end
-
-function M.cmd(str_format, ...)
-  local cmd = string.format(str_format, ...)
-  local _sta, _ = pcall(vim.cmd, cmd)
-  if _sta then
-    return cmd
-  end
-  return nil
-end
-
 function M.new_file(file)
   return require 'plenary.path':new(M.rep(file))
 end
@@ -1301,7 +1219,6 @@ function M.win_max_width()
     end
   end
   vim.cmd 'wincmd |'
-  print("vim.inspect(winids_dict):", vim.inspect(winids_dict))
   for _, winid in ipairs(winids) do
     vim.api.nvim_win_set_width(winid, winids_dict[winid])
   end
@@ -1449,6 +1366,14 @@ function M.getcreate_temp_dirpath(dirs)
   dirs = M.totable(dirs)
   table.insert(dirs, 1, DepeiTemp)
   return M.getcreate_dirpath(dirs)
+end
+
+function M.getcreate_temp_dir(dirs)
+  return M.getcreate_temp_dirpath(dirs).filename
+end
+
+function M.getcreate_temp_file(dirs, file)
+  return M.get_file(M.getcreate_temp_dir(dirs), file)
 end
 
 function M.count_char(str, char)
@@ -1778,7 +1703,7 @@ function M.get_paragraph(lnr)
 end
 
 function M.not_allow_in_file_name(text)
-  return string.match(vim.fn.fnamemodify(text, ":t:r"), '[~\\/:%*%?"<>|]')
+  return string.match(vim.fn.fnamemodify(text, ':t:r'), '[~\\/:%*%?"<>|]')
 end
 
 function M.find_dir_till_git(cur_filetypes, search_files, cur_file)
@@ -1868,6 +1793,99 @@ if os.path.isdir(dir):
         pass
 EOF
   ]]
+end
+
+function M.system_cd(file)
+  local fpath = M.new_file(file)
+  if fpath:is_dir() then
+    return 'cd /d ' .. file
+  else
+    return 'cd /d ' .. fpath:parent().filename
+  end
+end
+
+function M.write_lines_to_file(lines, file)
+  M.new_file(file):write(vim.fn.join(lines, '\n'), 'w')
+end
+
+M.done_default = dp_asyncrun.done_default
+M.done_append_default = dp_asyncrun.done_append_default
+M.done_replace_default = dp_asyncrun.done_replace_default
+
+M.temp_bat = M.getcreate_temp_file('dp_base', 'temp.bat')
+
+function M.write_bat_and_run(cmd)
+  M.write_lines_to_file({ cmd, }, M.temp_bat)
+  M.system_run_histadd('start', M.temp_bat)
+end
+
+function M.system_run(way, str_format, ...)
+  if type(str_format) == 'table' then
+    str_format = vim.fn.join(str_format, ' && ')
+  end
+  local cmd = string.format(str_format, ...)
+  if way == 'start' then
+    cmd = string.format([[silent !%s]], cmd)
+    vim.cmd(cmd)
+  elseif way == 'start silent' then
+    M.write_bat_and_run(cmd)
+  elseif way == 'asyncrun' then
+    vim.cmd 'AsyncStop'
+    cmd = string.format('AsyncRun %s', cmd)
+    if vim.g.asyncrun_status == 'running' then
+      M.timer_temp = vim.fn.timer_start(10, function()
+        if vim.g.asyncrun_status ~= 'running' then
+          pcall(vim.fn.timer_stop, M.timer_temp)
+          M.done_default()
+          vim.cmd(cmd)
+        end
+      end, { ['repeat'] = -1, })
+    else
+      vim.cmd(cmd)
+      M.done_default()
+    end
+  elseif way == 'term' then
+    cmd = string.format('wincmd s|term %s', cmd)
+    vim.cmd(cmd)
+  else
+    return
+  end
+  print("cmd:", cmd)
+  return cmd
+end
+
+function M.system_run_histadd(way, str_format, ...)
+  local cmd = M.system_run(way, str_format, ...)
+  if cmd then
+    vim.fn.histadd(':', cmd)
+  end
+end
+
+function M.cmd_histadd(str_format, ...)
+  local cmd = M.cmd(str_format, ...)
+  if cmd then
+    vim.fn.histadd(':', cmd)
+  end
+end
+
+function M.format(str_format, ...)
+  return string.format(str_format, ...)
+end
+
+function M.get_proj_root(file)
+  if file then
+    return M.rep(vim.fn['ProjectRootGet'](file))
+  end
+  return M.rep(vim.fn['ProjectRootGet']())
+end
+
+function M.cmd(str_format, ...)
+  local cmd = string.format(str_format, ...)
+  local _sta, _ = pcall(vim.cmd, cmd)
+  if _sta then
+    return cmd
+  end
+  return nil
 end
 
 return M
