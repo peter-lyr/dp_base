@@ -1850,7 +1850,6 @@ function M.system_run(way, str_format, ...)
   else
     return
   end
-  print("cmd:", cmd)
   return cmd
 end
 
