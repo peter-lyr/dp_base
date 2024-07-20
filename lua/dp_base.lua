@@ -1810,9 +1810,13 @@ M.done_replace_default = dp_asyncrun.done_replace_default
 
 M.temp_bat = M.getcreate_temp_file('dp_base', 'temp.bat')
 
-function M.write_bat_and_run(cmd)
+function M.write_bat_and_run(start, cmd)
   M.write_lines_to_file({ cmd, }, M.temp_bat)
-  M.cmd_histadd([[silent !"%s"]], M.temp_bat)
+  if start == 'start' then
+    M.cmd_histadd([[silent !start cmd /c "%s"]], M.temp_bat)
+  elseif start == 'start silent' then
+    M.cmd_histadd([[silent !"%s"]], M.temp_bat)
+  end
 end
 
 function M.system_run(way, str_format, ...)
@@ -1821,17 +1825,9 @@ function M.system_run(way, str_format, ...)
   end
   local cmd = string.format(str_format, ...)
   if way == 'start' then
-    if 1 then
-      M.cmd([[silent !%s]], cmd)
-    else
-      M.cmd([[silent !start cmd /c "%s"]], cmd)
-    end
+    M.write_bat_and_run(way, cmd)
   elseif way == 'start silent' then
-    if 1 then
-      M.write_bat_and_run(cmd)
-    else
-      M.cmd([[silent !start /b /min cmd /c "%s"]], cmd)
-    end
+    M.write_bat_and_run(way, cmd)
   elseif way == 'asyncrun' then
     vim.cmd 'AsyncStop'
     cmd = string.format('AsyncRun %s', cmd)
