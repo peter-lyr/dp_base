@@ -687,10 +687,6 @@ function M.get_file_dirs_till_git(file)
   end
   file = M.rep(file)
   local file_path = M.new_file(file)
-  if not file_path:is_file() then
-    print('not file: ' .. file)
-    return {}
-  end
   local dirs = {}
   for _ = 1, 24 do
     file_path = file_path:parent()
