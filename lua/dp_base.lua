@@ -1176,6 +1176,19 @@ function M.scan_dirs(dir, pattern)
   return dirs
 end
 
+function M.get_dirs_named_with_till_git(name)
+  local git_root = M.get_file_git_root()
+  local dirs = M.scan_dirs(git_root)
+  table.insert(dirs, 1, git_root)
+  local new_dirs = {}
+  for _, dir in ipairs(dirs) do
+    if M.is(M.new_file(dir):joinpath(name):is_dir()) then
+      new_dirs[#new_dirs + 1] = dir
+    end
+  end
+  return new_dirs
+end
+
 function M.win_max_height()
   local cur_winnr = vim.fn.winnr()
   local cur_wininfo = vim.fn.getwininfo(vim.fn.win_getid())[1]
