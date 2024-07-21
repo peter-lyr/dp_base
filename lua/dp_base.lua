@@ -1815,7 +1815,7 @@ function M.write_bat_and_run(start, cmd)
   if start == 'start' then
     M.cmd([[silent !start cmd /c "%s"]], M.temp_bat)
   elseif start == 'start silent' then
-    M.cmd([[silent !"%s"]], M.temp_bat)
+    M.cmd([[silent !start /min cmd /c "%s"]], M.temp_bat)
   end
 end
 
