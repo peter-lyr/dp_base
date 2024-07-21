@@ -1813,9 +1813,9 @@ M.temp_bat = M.getcreate_temp_file('dp_base', 'temp.bat')
 function M.write_bat_and_run(start, cmd)
   M.write_lines_to_file({ cmd, }, M.temp_bat)
   if start == 'start' then
-    M.cmd_histadd([[silent !start cmd /c "%s"]], M.temp_bat)
+    M.cmd([[silent !start cmd /c "%s"]], M.temp_bat)
   elseif start == 'start silent' then
-    M.cmd_histadd([[silent !"%s"]], M.temp_bat)
+    M.cmd([[silent !"%s"]], M.temp_bat)
   end
 end
 
@@ -1884,6 +1884,33 @@ function M.cmd(str_format, ...)
     return cmd
   end
   return nil
+end
+
+function M.powershell_run(cmd)
+  vim.g.powershell_run_cmd = cmd
+  vim.g.powershell_run_out = nil
+  vim.cmd [[
+  python << EOF
+import vim
+import subprocess
+cmd = vim.eval('g:powershell_run_cmd')
+process = subprocess.Popen(["powershell", cmd],stdout=subprocess.PIPE, stderr = subprocess.PIPE)
+out = process.communicate()
+res = []
+for o in out:
+  o = o.replace(b'\r', b'')
+  try:
+    o = o.decode('utf-8')
+  except:
+    try:
+      o = o.decode('gbk')
+    except:
+      o = '-error-'
+  res.append(o.split('\n'))
+vim.command(f"""let g:powershell_run_out = {res}""")
+EOF
+]]
+  return vim.g.powershell_run_out
 end
 
 return M
