@@ -1821,26 +1821,15 @@ M.done_default = dp_asyncrun.done_default
 M.done_append_default = dp_asyncrun.done_append_default
 M.done_replace_default = dp_asyncrun.done_replace_default
 
-M.temp_bat = M.getcreate_temp_file('dp_base', 'temp.bat')
-
-function M.write_bat_and_run(start, cmd)
-  M.write_lines_to_file({ cmd, }, M.temp_bat)
-  if start == 'start' then
-    M.cmd([[silent !start cmd /c "%s"]], M.temp_bat)
-  elseif start == 'start silent' then
-    M.cmd([[silent !start /min cmd /c "%s"]], M.temp_bat)
-  end
-end
-
 function M.system_run(way, str_format, ...)
   if type(str_format) == 'table' then
     str_format = vim.fn.join(str_format, ' && ')
   end
   local cmd = string.format(str_format, ...)
   if way == 'start' then
-    M.write_bat_and_run(way, cmd)
+    M.cmd([[silent !start cmd /c "%s"]], cmd)
   elseif way == 'start silent' then
-    M.write_bat_and_run(way, cmd)
+    M.cmd([[silent !start /b /min cmd /c "%s"]], cmd)
   elseif way == 'asyncrun' then
     vim.cmd 'AsyncStop'
     cmd = string.format('AsyncRun %s', cmd)
