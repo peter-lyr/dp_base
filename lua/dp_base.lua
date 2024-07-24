@@ -179,7 +179,10 @@ function M.notify_error_append(message, timeout)
   })
 end
 
-function M.get_short(content, max)
+function M.get_short(content, max, sep)
+  if not sep then
+    sep = '…'
+  end
   if not max then
     max = vim.fn.floor(vim.o.columns * 2 / 5)
   end
@@ -198,7 +201,7 @@ function M.get_short(content, max)
         break
       end
     end
-    return s1 .. '…' .. s2
+    return s1 .. sep .. s2
   end
   return content
 end
