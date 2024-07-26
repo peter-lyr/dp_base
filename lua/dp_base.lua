@@ -483,36 +483,36 @@ function M.aucmd(event, desc, opts)
   return vim.api.nvim_create_autocmd(event, opts)
 end
 
-function M.copyright(extension, callback)
-  M.aucmd({ 'BufReadPre', }, extension .. '.BufReadPre', {
-    callback = function(ev)
-      local file = vim.api.nvim_buf_get_name(ev.buf)
-      local ext = string.match(file, '%.([^.]+)$')
-      if vim.fn.getfsize(file) == 0 then
-        M.set_timeout(10, function()
-          if ext == 'norg' then
-            vim.cmd 'Neorg inject-metadata'
-          else
-            vim.cmd 'norm ggdG'
-            vim.fn.setline(1, {
-              string.format('Copyright (c) %s %s. All Rights Reserved.', vim.fn.strftime '%Y', 'liudepei'),
-              vim.fn.strftime 'create at %Y/%m/%d %H:%M:%S %A',
-            })
-            vim.cmd 'norm gcip'
-            if ext == string.match(file, '%.([^.]+)$') then
-              if callback then
-                callback()
-              else
-                vim.cmd 'norm Go'
-                vim.cmd 'norm S'
-              end
-            end
-          end
-        end)
-      end
-    end,
-  })
-end
+-- function M.copyright(extension, callback)
+--   M.aucmd({ 'BufReadPre', }, extension .. '.BufReadPre', {
+--     callback = function(ev)
+--       local file = vim.api.nvim_buf_get_name(ev.buf)
+--       local ext = string.match(file, '%.([^.]+)$')
+--       if vim.fn.getfsize(file) == 0 then
+--         M.set_timeout(10, function()
+--           if ext == 'norg' then
+--             vim.cmd 'Neorg inject-metadata'
+--           else
+--             vim.cmd 'norm ggdG'
+--             vim.fn.setline(1, {
+--               string.format('Copyright (c) %s %s. All Rights Reserved.', vim.fn.strftime '%Y', 'liudepei'),
+--               vim.fn.strftime 'create at %Y/%m/%d %H:%M:%S %A',
+--             })
+--             vim.cmd 'norm gcip'
+--             if ext == string.match(file, '%.([^.]+)$') then
+--               if callback then
+--                 callback()
+--               else
+--                 vim.cmd 'norm Go'
+--                 vim.cmd 'norm S'
+--               end
+--             end
+--           end
+--         end)
+--       end
+--     end,
+--   })
+-- end
 
 function M.del_map(mode, lhs)
   pcall(vim.keymap.del, mode, lhs)
