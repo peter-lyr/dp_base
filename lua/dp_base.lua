@@ -461,7 +461,7 @@ end
 
 function M.set_interval_vim_g(name, interval, callback)
   if vim.g[name] then
-    B.clear_interval(vim.g[name])
+    M.clear_interval(vim.g[name])
   end
   vim.g[name] = vim.fn.timer_start(interval, function()
     callback()
