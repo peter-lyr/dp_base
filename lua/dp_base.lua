@@ -112,7 +112,11 @@ end
 
 function M.set_win_md_ft(win)
   local buf = vim.api.nvim_win_get_buf(win)
-  vim.api.nvim_buf_set_option(buf, 'filetype', 'markdown')
+  local ft = 'markdown'
+  if vim.fn.has 'nvim-0.10' == 1 then
+    ft = 'norg'
+  end
+  vim.api.nvim_buf_set_option(buf, 'filetype', ft)
   vim.api.nvim_win_set_option(win, 'concealcursor', 'nvic')
   vim.api.nvim_win_set_option(win, 'conceallevel', 3)
 end
