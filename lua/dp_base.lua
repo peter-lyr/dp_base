@@ -129,6 +129,9 @@ function M.notify_info(message, timeout)
   end
   require 'notify'.dismiss()
   message = vim.fn.join(messages, '\n')
+  if vim.fn.has 'nvim-0.10' == 1 then
+    message = string.gsub(message, '\\', '/')
+  end
   vim.notify(message, 'info', {
     title = title,
     animate = false,
@@ -144,6 +147,9 @@ function M.notify_info_append(message, timeout)
     title = table.remove(messages, 1)
   end
   message = vim.fn.join(messages, '\n')
+  if vim.fn.has 'nvim-0.10' == 1 then
+    message = string.gsub(message, '\\', '/')
+  end
   vim.notify(message, 'info', {
     title = title,
     animate = false,
@@ -160,6 +166,9 @@ function M.notify_error(message, timeout)
   end
   require 'notify'.dismiss()
   message = vim.fn.join(messages, '\n')
+  if vim.fn.has 'nvim-0.10' == 1 then
+    message = string.gsub(message, '\\', '/')
+  end
   vim.notify(message, 'error', {
     title = title,
     animate = false,
@@ -175,6 +184,9 @@ function M.notify_error_append(message, timeout)
     title = table.remove(messages, 1)
   end
   message = vim.fn.join(messages, '\n')
+  if vim.fn.has 'nvim-0.10' == 1 then
+    message = string.gsub(message, '\\', '/')
+  end
   vim.notify(message, 'error', {
     title = title,
     animate = false,
