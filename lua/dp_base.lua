@@ -324,6 +324,10 @@ function M.is_buf_fts(fts, buf)
   return nil
 end
 
+function M.get_file_under_source(source, file)
+  return M.getcreate_file(M.file_parent(source), file)
+end
+
 function M.get_source_dot_dir(source, ext)
   local root = vim.fn.fnamemodify(source, ':p:h')
   local tail = vim.fn.fnamemodify(source, ':p:t')
