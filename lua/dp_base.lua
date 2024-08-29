@@ -5,6 +5,8 @@
 
 local M = {}
 
+M.temp_map_timeout = 1000
+
 M.NOT_BIN_EXTS = {
   'lua',
   'c', 'h',
@@ -1307,6 +1309,22 @@ function M.get_path_dirs()
   return dirs
 end
 
+function M.exit_temp_maps(c)
+  for _, val in ipairs(M.temp_maps) do
+    M.set_timeout(100, function()
+      M.del_map(val['mode'], val[1])
+    end)
+  end
+  if c then
+    local temp = { 'canceled:' .. c, }
+    for _, i in ipairs(M.temp_maps) do
+      temp[#temp + 1] = string.format('[%s] %s', i[1], i['desc'])
+    end
+    -- M.notify_info(temp, 1000 * 60 * 60 * 24)
+  end
+  M.temp_maps = {}
+end
+
 vim.on_key(function(c)
   if M.yanking then
     return
@@ -1314,6 +1332,7 @@ vim.on_key(function(c)
   if #M.temp_maps == 0 then
     return
   end
+  M.set_interval_vim_g('temp_map', M.temp_map_timeout, M.exit_temp_maps)
   local temp = {}
   for i in string.gmatch(c, '.') do
     temp[#temp + 1] = string.byte(i, 1)
@@ -1332,23 +1351,14 @@ vim.on_key(function(c)
   if M.is_in_tbl(c, M.exclude_chars) then
     return
   end
-  for _, val in ipairs(M.temp_maps) do
-    M.set_timeout(100, function()
-      M.del_map(val['mode'], val[1])
-    end)
-  end
-  temp = { 'canceled:' .. c, }
-  for _, i in ipairs(M.temp_maps) do
-    temp[#temp + 1] = string.format('[%s] %s', i[1], i['desc'])
-  end
-  -- M.notify_info(temp, 1000 * 60 * 60 * 24)
-  M.temp_maps = {}
+  M.exit_temp_maps(c)
 end)
 
 function M.temp_map(tbl, exclude_chars)
   if not M.is(tbl) then
     return
   end
+  M.set_interval_vim_g('temp_map', M.temp_map_timeout, M.exit_temp_maps)
   M.temp_maps = vim.deepcopy(tbl)
   M.exclude_chars = vim.deepcopy(M.totable(exclude_chars))
   local temp = { 'ready:', }
